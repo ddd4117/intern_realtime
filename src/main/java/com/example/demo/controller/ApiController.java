@@ -5,6 +5,7 @@ import com.example.demo.common.DomParser;
 import com.example.demo.common.OpenAPI;
 import com.example.demo.common.item.Communication;
 import com.example.demo.common.item.Construction;
+import com.example.demo.common.item.DaeguTraffic;
 import com.example.demo.common.item.Incidient;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class ApiController {
 //        for (Communication c : commArray){
 //            System.out.println(c.toString());
 //        }
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 4; i <= 4; i++) {
             InputStream is = api.getOPENAPI(i);
             switch (i) {
                 case 1:
@@ -46,6 +47,10 @@ public class ApiController {
                         System.out.println(inci.toString());
                     }
                     break;
+                case 4:
+                    ArrayList<DaeguTraffic> daeguTraffics = (ArrayList<DaeguTraffic>) DomParser.getParseingList(4,is);
+                    for (DaeguTraffic dt : daeguTraffics)
+                        System.out.println(dt.toString());
             }
         }
         return mav;

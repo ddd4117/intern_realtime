@@ -1,8 +1,6 @@
 package com.example.demo.common;
 
-import com.example.demo.common.item.Communication;
-import com.example.demo.common.item.Construction;
-import com.example.demo.common.item.Incidient;
+import com.example.demo.common.item.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DomParser {
     public static Object getParseingList(int flag, InputStream is)
@@ -26,6 +25,10 @@ public class DomParser {
                 return process_Communication(is);
             case 3:
                 return process_Incidient(is);
+            case 4:
+                return process_DaeguTraffic(is);
+            case 5:
+                return process_DaeguIncidient(is);
         }
         return null;
     }
@@ -113,6 +116,83 @@ public class DomParser {
             incidientArrayList.add(incidient);
         }
         return incidientArrayList;
+    }
+
+    public static HashMap<String, DaeguTraffic> process_DaeguTraffic(InputStream is){
+        DocumentBuilderFactory documentBuilderFactory;
+        DocumentBuilder documentBuilder;
+        Document document = null;
+        System.out.println("DOMPARSER START");
+
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        document = getDocument(is, documentBuilderFactory, document);
+
+        HashMap<String, DaeguTraffic> daeguTraffics = new HashMap<>();
+        NodeList item = document.getElementsByTagName("item");
+        System.out.println(item.getLength());
+        for(int idx = 0 ; idx < item.getLength(); idx++){
+            DaeguTraffic daeguTraffic = new DaeguTraffic();
+            Node node = item.item(idx);
+            Element element = (Element) node;
+            daeguTraffic.setAtmsTm(element.getElementsByTagName("atmsTm").item(0).getTextContent());
+            daeguTraffic.setDist(Double.parseDouble(element.getElementsByTagName("dist").item(0).getTextContent()));
+            daeguTraffic.setDsrcLinkSn(element.getElementsByTagName("dsrcLinkSn").item(0).getTextContent());
+            daeguTraffic.setEndFacNm(element.getElementsByTagName("endFacNm").item(0).getTextContent());
+            daeguTraffic.setLinkSpeed(Integer.parseInt(element.getElementsByTagName("linkSpeed").item(0).getTextContent()));
+            daeguTraffic.setLinkTime(Double.parseDouble(element.getElementsByTagName("linkTime").item(0).getTextContent()));
+            daeguTraffic.setRoadNm(element.getElementsByTagName("roadNm").item(0).getTextContent());
+            daeguTraffic.setSectionInfoCd(element.getElementsByTagName("sectionInfoCd").item(0).getTextContent());
+            daeguTraffic.setSectionNm(element.getElementsByTagName("sectionNm").item(0).getTextContent());
+            daeguTraffic.setStartFacNm(element.getElementsByTagName("startFacNm").item(0).getTextContent());
+            String key = element.getElementsByTagName("stdLinkId").item(0).getTextContent();
+            daeguTraffic.setStdLinkId(key);
+            if(daeguTraffics.keySet().contains(key)){
+                System.out.println(key);
+            }
+            daeguTraffics.put(key, daeguTraffic);
+        }
+        return daeguTraffics;
+    }
+
+    public static HashMap<String, DaeguIncidient> process_DaeguIncidient(InputStream is){
+        DocumentBuilderFactory documentBuilderFactory;
+        DocumentBuilder documentBuilder;
+        Document document = null;
+        System.out.println("DOMPARSER START");
+
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        document = getDocument(is, documentBuilderFactory, document);
+
+        HashMap<String, DaeguIncidient> daeguIncidients = new HashMap<>();
+        NodeList item = document.getElementsByTagName("item");
+        System.out.println(item.getLength());
+        for(int idx = 0 ; idx < item.getLength(); idx++){
+            DaeguIncidient daeguIncidient = new DaeguIncidient();
+            Node node = item.item(idx);
+            Element element = (Element) node;
+            daeguIncidient.setCoordx(Double.parseDouble(element.getElementsByTagName("coordx").item(0).getTextContent()));
+            daeguIncidient.setCoordy(Double.parseDouble(element.getElementsByTagName("coordy").item(0).getTextContent()));
+            daeguIncidient.setEnddate(element.getElementsByTagName("enddate").item(0).getTextContent());
+            daeguIncidient.setIncidientcode(Integer.parseInt(element.getElementsByTagName("incidentcode").item(0).getTextContent()));
+
+            daeguIncidient.setIncidentsubcode(Integer.parseInt(element.getElementsByTagName("incidentsubcode").item(0).getTextContent()));
+            daeguIncidient.setIncidenttitle(element.getElementsByTagName("incidenttitle").item(0).getTextContent());
+            daeguIncidient.setLinkid(element.getElementsByTagName("linkid").item(0).getTextContent());
+            daeguIncidient.setLocation(element.getElementsByTagName("location").item(0).getTextContent());
+            daeguIncidient.setLogdate(element.getElementsByTagName("logdate").item(0).getTextContent());
+            daeguIncidient.setReportdate(element.getElementsByTagName("reportdate").item(0).getTextContent());
+            daeguIncidient.setStartdate(element.getElementsByTagName("startdate").item(0).getTextContent());
+            daeguIncidient.setTrafficgrade(element.getElementsByTagName("trafficgrade").item(0).getTextContent());
+            daeguIncidient.setTroublegrade(Integer.parseInt(element.getElementsByTagName("troublegrade").item(0).getTextContent()));
+            String key = element.getElementsByTagName("incidentid").item(0).getTextContent();
+            daeguIncidient.setIncidentid(key);
+
+            if(daeguIncidients.keySet().contains(key)){
+                System.out.println(key);
+            }
+            daeguIncidients.put(key, daeguIncidient);
+        }
+        return daeguIncidients;
     }
 
     private static Document getDocument(InputStream is, DocumentBuilderFactory documentBuilderFactory, Document document) {

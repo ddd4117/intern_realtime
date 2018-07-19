@@ -20,7 +20,8 @@ function connect() {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/greetings', function (greeting) {
             // showGreeting(JSON.parse(greeting.body).content);
-            move_mainCursor(JSON.parse(greeting.body));
+            var jsondata = JSON.parse(greeting.body)
+            move_mainCursor(jsondata);
         });
     });
 }

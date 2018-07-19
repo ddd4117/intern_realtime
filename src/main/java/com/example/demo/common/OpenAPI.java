@@ -29,6 +29,12 @@ public class OpenAPI {
                 Address = "http://openapi.its.go.kr/api/NIncidentIdentity?key="+auth_key+"&ReqType=1&MinX=127.100000&MaxX=128.890000&MinY=34.100000%20&MaxY=39.100000&type=its";
                 break;
             case 4:
+                Address = "http://car.daegu.go.kr/openapi-data/service/rest/data/linkspeed?ServiceKey=VXjcyNgiB3jT3u1GwQo76CIXSIbi%2Fty4NiDr7mJB%2BQa6CpeYEJ70oapwcE5ZAS982tW%2BibrU1weq672NUwWFZQ%3D%3D&numOfRows=1400";
+                break;
+            case 5 :
+                Address = "http://car.daegu.go.kr/openapi-data/service/rest/data2/dgincident?serviceKey=VXjcyNgiB3jT3u1GwQo76CIXSIbi%2Fty4NiDr7mJB%2BQa6CpeYEJ70oapwcE5ZAS982tW%2BibrU1weq672NUwWFZQ%3D%3D&numOfRows=100&pageSize=100&pageNo=1&startPage=1";
+                break;
+            case 6:
                 System.out.println("Exception");
                 return null;
         }

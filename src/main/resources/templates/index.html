@@ -60,7 +60,36 @@
     <div align="center">
         <div id="map" style="width:500px;height:400px;"></div>
     </div>
+    <form align="center" name="formA">
+        <input type="radio" name="marker" checked="checked" value="marker1"/> 출발
+    </br>
+        <input type="radio" name="marker" value="marker2"/> 도착
+    </form>
 </div>
 <script src="/navermap.js"></script>
+<script>
+    var radios = document.forms["formA"].elements["marker"];
+    for (var i = 0, max = radios.length; i < max; i++) {
+        radios[i].onclick = function () {
+            if (this.value == 'marker1') {
+                alert("1");
+                naver.maps.Event.removeListener(listener2);
+                listener1 = naver.maps.Event.addListener(map, 'click', function (e) {
+                    // if (sel_type == "marker2")
+                    marker1.setPosition(e.coord);
+                });
+            }
+            else {
+                alert("2");
+                naver.maps.Event.removeListener(listener1);
+                listener2 = naver.maps.Event.addListener(map, 'click', function (e) {
+                    // if (sel_type == "marker1")
+                    marker2.setPosition(e.coord);
+                });
+            }
+        }
+    }
+</script>
+
 </body>
 </html>
