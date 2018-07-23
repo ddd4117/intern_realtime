@@ -1,4 +1,6 @@
-package com.example.demo.common.item;
+package com.example.demo.common.item.daegu_info;
+
+import org.json.simple.JSONObject;
 
 public class DaeguIncidient {
     private double coordx = 0.0;
@@ -13,8 +15,24 @@ public class DaeguIncidient {
     private String logdate = "";
     private String reportdate = "";
     private String startdate = "";
-    private String trafficgrade = "";
-    private int troublegrade = 0;
+    private String trafficgrade = ""; //교통정보 0원활 1서행 2지체
+    private int troublegrade = 0; // 0~6 0불명확 1경미 ~ 6매우심각
+
+    public JSONObject convertJsonInfo()
+    {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("coordx", coordx);
+        jsonObject.put("coordy", coordy);
+        jsonObject.put("enddate", enddate);
+        jsonObject.put("incidientcode", incidientcode);
+        jsonObject.put("incidentsubcode", incidentsubcode);
+        jsonObject.put("incidenttitle", incidenttitle);
+        jsonObject.put("location",location);
+        jsonObject.put("startdate", startdate);
+        jsonObject.put("trafficgrade", trafficgrade);
+        jsonObject.put("troublegrade",troublegrade);
+        return jsonObject;
+    }
 
     @Override
     public String toString() {
@@ -147,4 +165,6 @@ public class DaeguIncidient {
     public void setTroublegrade(int troublegrade) {
         this.troublegrade = troublegrade;
     }
+
+
 }

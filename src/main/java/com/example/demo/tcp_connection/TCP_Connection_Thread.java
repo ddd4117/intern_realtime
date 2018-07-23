@@ -3,12 +3,9 @@ package com.example.demo.tcp_connection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -52,7 +49,6 @@ public class TCP_Connection_Thread implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
     class ServerReceiver extends Thread {
@@ -78,7 +74,6 @@ public class TCP_Connection_Thread implements Runnable {
                 while (in != null) {
                     String msg = in.readUTF();
                     System.out.println(msg);
-//                    sendToAll(msg);
                 }
             } catch (IOException e) {
                 // ignore

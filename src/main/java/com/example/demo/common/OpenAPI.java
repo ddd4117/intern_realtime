@@ -1,5 +1,8 @@
 package com.example.demo.common;
 
+import com.example.demo.common.item.GPS;
+import com.example.demo.manager.DataManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -17,13 +20,22 @@ public class OpenAPI {
     public InputStream getOPENAPI(int flag)
     {
         // 공사정보
+        GPS gps = DataManager.getInstance().getCurrentGPS();
+        // x y 바뀜
+        double minY = gps.getX() - 0.01;
+        double maxY = gps.getX() + 0.01;
+        double minX = gps.getY() - 0.01;
+        double maxX = gps.getY() + 0.01;
+        String.format("%.6f",minY);
         String Address =  "";
         switch (flag){
             case 1:
-                Address = "http://openapi.its.go.kr/api/NEventIdentity?key="+auth_key+"%20&ReqType=2&MinX=127.100000&MaxX=128.890000%20&MinY=34.100000&MaxY=39.100000&type=ex";
+                Address = "http://openapi.its.go.kr/api/NEventIdentity?key="+auth_key+"%20&ReqType=2&MinX="+minX+"&MaxX="+maxX+"%20&MinY="+minY+"&MaxY="+maxY+"&type=its";
                 break;
             case 2:
-                Address = "http://openapi.its.go.kr/api/NTrafficInfo?key="+auth_key+"&ReqType=2&MinX=126.800000&MaxX=127.890000&MinY=34.900000%20&MaxY=35.100000";
+                Address = "http://openapi.its.go.kr/api/NTrafficInfo?key="+auth_key+"&ReqType=2&MinX="+String.format("%.6f",DataManager.getInstance().getStartY())+"&MaxX="
+                        +String.format("%.6f",DataManager.getInstance().getEndY())+"%20&MinY="+String.format("%.6f",DataManager.getInstance().getStartX())+"&MaxY="+String.format("%.6f",DataManager.getInstance().getEndX());
+                System.out.println(Address);
                 break;
             case 3:
                 Address = "http://openapi.its.go.kr/api/NIncidentIdentity?key="+auth_key+"&ReqType=1&MinX=127.100000&MaxX=128.890000&MinY=34.100000%20&MaxY=39.100000&type=its";

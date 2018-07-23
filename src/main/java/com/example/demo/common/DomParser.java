@@ -1,6 +1,10 @@
 package com.example.demo.common;
 
-import com.example.demo.common.item.*;
+import com.example.demo.common.item.Communication;
+import com.example.demo.common.item.Construction;
+import com.example.demo.common.item.Incidient;
+import com.example.demo.common.item.daegu_info.DaeguIncidient;
+import com.example.demo.common.item.daegu_info.DaeguTraffic;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -118,11 +122,16 @@ public class DomParser {
         return incidientArrayList;
     }
 
+    /**
+     * 대구교통소통정보
+     * @param is OpeaAPI Input Stream
+     * @return HashMap of DaeguTraffic
+     */
     public static HashMap<String, DaeguTraffic> process_DaeguTraffic(InputStream is){
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("DOMPARSER START");
+        System.out.println("process_DaeguTraffic START");
 
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
@@ -131,34 +140,40 @@ public class DomParser {
         NodeList item = document.getElementsByTagName("item");
         System.out.println(item.getLength());
         for(int idx = 0 ; idx < item.getLength(); idx++){
-            DaeguTraffic daeguTraffic = new DaeguTraffic();
+            DaeguTraffic traffic = new DaeguTraffic();
             Node node = item.item(idx);
             Element element = (Element) node;
-            daeguTraffic.setAtmsTm(element.getElementsByTagName("atmsTm").item(0).getTextContent());
-            daeguTraffic.setDist(Double.parseDouble(element.getElementsByTagName("dist").item(0).getTextContent()));
-            daeguTraffic.setDsrcLinkSn(element.getElementsByTagName("dsrcLinkSn").item(0).getTextContent());
-            daeguTraffic.setEndFacNm(element.getElementsByTagName("endFacNm").item(0).getTextContent());
-            daeguTraffic.setLinkSpeed(Integer.parseInt(element.getElementsByTagName("linkSpeed").item(0).getTextContent()));
-            daeguTraffic.setLinkTime(Double.parseDouble(element.getElementsByTagName("linkTime").item(0).getTextContent()));
-            daeguTraffic.setRoadNm(element.getElementsByTagName("roadNm").item(0).getTextContent());
-            daeguTraffic.setSectionInfoCd(element.getElementsByTagName("sectionInfoCd").item(0).getTextContent());
-            daeguTraffic.setSectionNm(element.getElementsByTagName("sectionNm").item(0).getTextContent());
-            daeguTraffic.setStartFacNm(element.getElementsByTagName("startFacNm").item(0).getTextContent());
+            traffic.setAtmsTm(element.getElementsByTagName("atmsTm").item(0).getTextContent());
+            traffic.setDist(Double.parseDouble(element.getElementsByTagName("dist").item(0).getTextContent()));
+            traffic.setDsrcLinkSn(element.getElementsByTagName("dsrcLinkSn").item(0).getTextContent());
+            traffic.setEndFacNm(element.getElementsByTagName("endFacNm").item(0).getTextContent());
+            traffic.setLinkSpeed(Integer.parseInt(element.getElementsByTagName("linkSpeed").item(0).getTextContent()));
+            traffic.setLinkTime(Double.parseDouble(element.getElementsByTagName("linkTime").item(0).getTextContent()));
+            traffic.setRoadNm(element.getElementsByTagName("roadNm").item(0).getTextContent());
+            traffic.setSectionInfoCd(element.getElementsByTagName("sectionInfoCd").item(0).getTextContent());
+            traffic.setSectionNm(element.getElementsByTagName("sectionNm").item(0).getTextContent());
+            traffic.setStartFacNm(element.getElementsByTagName("startFacNm").item(0).getTextContent());
             String key = element.getElementsByTagName("stdLinkId").item(0).getTextContent();
-            daeguTraffic.setStdLinkId(key);
+            traffic.setStdLinkId(key);
             if(daeguTraffics.keySet().contains(key)){
                 System.out.println(key);
             }
-            daeguTraffics.put(key, daeguTraffic);
+            daeguTraffics.put(key, traffic);
         }
+        System.out.println("process_DaeguTraffic END");
         return daeguTraffics;
     }
 
+    /**
+     * 대구 돌발정보(사고, 공사)
+     * @param is : OpenAPI Input Stream
+     * @return
+     */
     public static HashMap<String, DaeguIncidient> process_DaeguIncidient(InputStream is){
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("DOMPARSER START");
+        System.out.println("process_DaeguIncidient START");
 
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
@@ -192,6 +207,7 @@ public class DomParser {
             }
             daeguIncidients.put(key, daeguIncidient);
         }
+        System.out.println("process_DaeguIncidient END");
         return daeguIncidients;
     }
 

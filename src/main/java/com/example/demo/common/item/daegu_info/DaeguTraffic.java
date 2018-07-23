@@ -1,9 +1,11 @@
-package com.example.demo.common.item;
+package com.example.demo.common.item.daegu_info;
+
+import org.json.simple.JSONObject;
 
 public class DaeguTraffic {
     private String atmsTm = ""; //정보발생일시
     private double dist = 0.0; // 구간거리
-    private String dsrcLinkSn = "";
+    private String dsrcLinkSn = ""; // 쓸모없음
     private String endFacNm = ""; //도착지점명
     private int linkSpeed = 0; // 링크속도
     private double linkTime = 0; // 링크통행시간
@@ -13,9 +15,20 @@ public class DaeguTraffic {
     private String startFacNm = ""; // 시작지점명
     private String stdLinkId = ""; // 표준링크ID
 
+    public JSONObject convertJsonInfo()
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("roadNm", roadNm);
+        obj.put("sectionInfoCd", sectionInfoCd);
+        obj.put("sectionNm", sectionNm);
+        obj.put("linkSpeed", linkSpeed);
+        obj.put("linkTime", linkTime);
+        return obj;
+    }
+
     @Override
     public String toString() {
-        return "DaeguTraffic{" +
+        return "DaeguUnexpected{" +
                 "atmsTm='" + atmsTm + '\'' +
                 ", dist=" + dist +
                 ", dsrcLinkSn='" + dsrcLinkSn + '\'' +
