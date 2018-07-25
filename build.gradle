@@ -36,5 +36,8 @@ dependencies {
     runtime("org.springframework.boot:spring-boot-devtools")
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 
+
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile 'org.mariadb.jdbc:mariadb-java-client'
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

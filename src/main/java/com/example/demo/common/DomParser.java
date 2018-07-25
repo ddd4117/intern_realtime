@@ -84,7 +84,7 @@ public class DomParser {
             communication.setAvg_speed(Integer.parseInt(element.getElementsByTagName("avgspeed").item(0).getTextContent()));
             communication.setStart_node_id(element.getElementsByTagName("startnodeid").item(0).getTextContent());
             communication.setRoad_name_text(element.getElementsByTagName("roadnametext").item(0).getTextContent());
-            communication.setTravle_time(element.getElementsByTagName("traveltime").item(0).getTextContent());
+            communication.setTravel_time(element.getElementsByTagName("traveltime").item(0).getTextContent());
             communication.setEnd_node_id(element.getElementsByTagName("endnodeid").item(0).getTextContent());
             communication.setGenerate_date(element.getElementsByTagName("generatedate").item(0).getTextContent());
             communicationArrayList.add(communication);
@@ -193,7 +193,8 @@ public class DomParser {
             daeguIncidient.setIncidentsubcode(Integer.parseInt(element.getElementsByTagName("incidentsubcode").item(0).getTextContent()));
             daeguIncidient.setIncidenttitle(element.getElementsByTagName("incidenttitle").item(0).getTextContent());
             daeguIncidient.setLinkid(element.getElementsByTagName("linkid").item(0).getTextContent());
-            daeguIncidient.setLocation(element.getElementsByTagName("location").item(0).getTextContent());
+            if(element.getElementsByTagName("location").item(0) != null)
+                daeguIncidient.setLocation(element.getElementsByTagName("location").item(0).getTextContent());
             daeguIncidient.setLogdate(element.getElementsByTagName("logdate").item(0).getTextContent());
             daeguIncidient.setReportdate(element.getElementsByTagName("reportdate").item(0).getTextContent());
             daeguIncidient.setStartdate(element.getElementsByTagName("startdate").item(0).getTextContent());

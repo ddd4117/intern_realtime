@@ -37,14 +37,6 @@ public class DataManager {
         return ourInstance;
     }
 
-    public HashMap<String, DaeguTraffic> getTrafficHashMap() {
-        return daeguTrafficHashMap;
-    }
-
-    public void setTrafficHashMap(HashMap<String, DaeguTraffic> trafficHashMap) {
-        this.daeguTrafficHashMap = trafficHashMap;
-    }
-
     public HashMap<String, DaeguIncidient> getIncidientHashMap() {
         return incidientHashMap;
     }

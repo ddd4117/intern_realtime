@@ -21,11 +21,11 @@ function connect() {
         stompClient.subscribe('/topic/greetings', function (greeting) {
             // showGreeting(JSON.parse(greeting.body).content);
             var jsondata = JSON.parse(greeting.body)
-            if(jsondata.type == "marker"){
+            if (jsondata.type == "marker") {
                 move_mainCursor(jsondata);
             }
-            else if(jsondata.type == "info"){
-                process_JSONdata(JSON.parse(jsondata.data));
+            else if (jsondata.type == "info") {
+                process_JSONdata(jsondata.data);
             }
         });
     });
@@ -45,10 +45,10 @@ function sendName() {
     var x2 = marker2.position.lat()
     var y2 = marker2.position.lng()
     var data = {
-        "x1":x1,
-        "y1":y1,
-        "x2":x2,
-        "y2":y2,
+        "x1": x1,
+        "y1": y1,
+        "x2": x2,
+        "y2": y2,
         'text': $("#name").val()
     }
     stompClient.send("/app/hello", {}, JSON.stringify(data));
@@ -62,14 +62,34 @@ $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $("#connect").click(function () {
+        connect();
+    });
+    $("#disconnect").click(function () {
+        disconnect();
+    });
+    $("#send").click(function () {
+        sendName();
+    });
 });
 
 
-function process_JSONdata(jsondata){
-    for(var i = 0; i < jsondata.length; i++) {
+function process_JSONdata(jsondata) {
+    $("#greetings").empty()
+    for (var i = 0; i < jsondata.length; i++) {
         var obj = jsondata[i];
+        $("#greetings").append("<tr>");
+        $("#greetings").append("<td>"
+            + obj.road_name_text +
+            "</td>");
+        $("#greetings").append("<td>"
+            + obj.travel_time +
+        "</td>");
+        $("#greetings").append("<td>"
+            + obj.sectionNm +
+            "</td>");
+        $("#greetings").append("<tr>");
     }
+
+
 }

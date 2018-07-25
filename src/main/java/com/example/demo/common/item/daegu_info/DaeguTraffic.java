@@ -28,7 +28,7 @@ public class DaeguTraffic {
 
     @Override
     public String toString() {
-        return "DaeguUnexpected{" +
+        return "DaeguTraffic{" +
                 "atmsTm='" + atmsTm + '\'' +
                 ", dist=" + dist +
                 ", dsrcLinkSn='" + dsrcLinkSn + '\'' +

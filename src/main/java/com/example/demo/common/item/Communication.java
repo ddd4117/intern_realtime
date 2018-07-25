@@ -1,12 +1,14 @@
 package com.example.demo.common.item;
 
+import org.json.simple.JSONObject;
+
 public class Communication {
     String road_section_id;
     int avg_speed;
     String road_name_text;
     String start_node_id;
     String end_node_id;
-    String travle_time;
+    String travel_time;
     String generate_date;
 
     public Communication() {
@@ -15,10 +17,16 @@ public class Communication {
         this.road_name_text = "";
         this.start_node_id = "";
         this.end_node_id = "";
-        this.travle_time = "";
+        this.travel_time = "";
         this.generate_date = "";
     }
-
+    public JSONObject convertJSON(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("avg_speed", avg_speed);
+        jsonObject.put("travel_time", travel_time);
+        jsonObject.put("road_name_text", road_name_text);
+        return jsonObject;
+    }
     @Override
     public String toString() {
         return "Communication{" +
@@ -27,7 +35,7 @@ public class Communication {
                 ", road_name_text='" + road_name_text + '\'' +
                 ", start_node_id='" + start_node_id + '\'' +
                 ", end_node_id='" + end_node_id + '\'' +
-                ", travle_time='" + travle_time + '\'' +
+                ", travle_time='" + travel_time + '\'' +
                 ", generate_date='" + generate_date + '\'' +
                 '}';
     }
@@ -72,12 +80,12 @@ public class Communication {
         this.end_node_id = end_node_id;
     }
 
-    public String getTravle_time() {
-        return travle_time;
+    public String getTravel_time() {
+        return travel_time;
     }
 
-    public void setTravle_time(String travle_time) {
-        this.travle_time = travle_time;
+    public void setTravel_time(String travle_time) {
+        this.travel_time = travle_time;
     }
 
     public String getGenerate_date() {

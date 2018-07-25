@@ -2,17 +2,17 @@ package com.example.demo;
 
 public class Greeting {
 
-    private String test;
+    private String text;
 
     public Greeting() {
     }
 
     public Greeting(String content) {
-        this.test = content;
+        this.text = content;
     }
 
-    public String getContent() {
-        return test;
+    public String getText() {
+        return text;
     }
 
 }

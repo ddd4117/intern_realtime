@@ -18,7 +18,7 @@ public class TCP_Connection_Thread implements Runnable {
             serverSocket = new ServerSocket(5000);
             clients = new HashMap();
             Collections.synchronizedMap(clients);
-            System.out.println("서버가 시작되었습니다.");
+            System.out.println("Connection Ready.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,7 +43,7 @@ public class TCP_Connection_Thread implements Runnable {
             try {
                 socket = serverSocket.accept();
                 System.out.println("[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "에서 접속하였습니다.");
+                        + socket.getPort() + "]" + "is connected.");
                 ServerReceiver thread = new ServerReceiver(socket);
                 thread.start();
             } catch (IOException e) {
@@ -67,7 +67,7 @@ public class TCP_Connection_Thread implements Runnable {
             String name = "";
             try {
                 name = in.readUTF();
-                sendToAll("#" + name + "님이 들어오셨습니다.");
+                sendToAll("#" + name + "is connected.");
                 clients.put(name, out);
                 System.out.println("현재 서버접속자 수는 "
                         + clients.size() + "입니다.");
@@ -78,7 +78,7 @@ public class TCP_Connection_Thread implements Runnable {
             } catch (IOException e) {
                 // ignore
             } finally {
-                sendToAll("#" + name + "님이 나가셨습니다.");
+                sendToAll("#" + name + "is disconnected.");
                 clients.remove(name);
                 System.out.println("[" + socket.getInetAddress() + ":"
                         + socket.getPort() + "]"

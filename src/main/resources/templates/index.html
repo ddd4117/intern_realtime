@@ -72,7 +72,6 @@
     for (var i = 0, max = radios.length; i < max; i++) {
         radios[i].onclick = function () {
             if (this.value == 'marker1') {
-                alert("1");
                 naver.maps.Event.removeListener(listener2);
                 listener1 = naver.maps.Event.addListener(map, 'click', function (e) {
                     // if (sel_type == "marker2")
@@ -80,7 +79,6 @@
                 });
             }
             else {
-                alert("2");
                 naver.maps.Event.removeListener(listener1);
                 listener2 = naver.maps.Event.addListener(map, 'click', function (e) {
                     // if (sel_type == "marker1")
