@@ -40,10 +40,10 @@ function disconnect() {
 }
 
 function sendName() {
-    var x1 = marker1.position.lat()
-    var y1 = marker1.position.lng()
-    var x2 = marker2.position.lat()
-    var y2 = marker2.position.lng()
+    var x1 = marker1.position.lng()
+    var y1 = marker1.position.lat()
+    var x2 = marker2.position.lng()
+    var y2 = marker2.position.lat()
     var data = {
         "x1": x1,
         "y1": y1,

@@ -1,20 +1,12 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.common.DomParser;
-import com.example.demo.common.OpenAPI;
-import com.example.demo.common.item.Communication;
-import com.example.demo.common.item.Construction;
-import com.example.demo.common.item.Incidient;
-import com.example.demo.common.item.daegu_info.DaeguTraffic;
 import com.example.demo.dao.NodeDao;
+import com.example.demo.manager.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.io.InputStream;
-import java.util.ArrayList;
 
 @Controller
 public class ApiController {
@@ -23,7 +15,7 @@ public class ApiController {
     @RequestMapping("/main")
     public ModelAndView index(ModelAndView mav) {
         mav.setViewName("main");
-        nodeDao.getNode();
+        nodeDao.getNodeID(DataManager.getInstance().getCurrentGPS());
 //        OpenAPI api = new OpenAPI();
 //        InputStream is = api.getOPENAPI(2);
 //        ArrayList<Construction> consArray = (ArrayList<Construction>) DomParser.getParseingList(2,is);

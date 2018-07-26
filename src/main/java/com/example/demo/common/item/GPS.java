@@ -7,8 +7,8 @@ public class GPS {
     }
     public GPS(String str){
         String tmp[] = str.split(" ");
-        this.x = Double.parseDouble(tmp[0]);
-        this.y = Double.parseDouble(tmp[1]);
+        this.y = Double.parseDouble(tmp[0]);
+        this.x = Double.parseDouble(tmp[1]);
     }
 
     public GPS(double x, double y) {

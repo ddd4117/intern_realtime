@@ -1,5 +1,6 @@
 package com.example.demo.manager;
 
+import com.example.demo.common.item.Communication;
 import com.example.demo.common.item.GPS;
 import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
@@ -8,16 +9,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataManager {
-    private int gps_idx = 0;
+    /* instance */
     private static DataManager ourInstance;
+
+    /* gps info*/
+    private int gps_idx = 0;
     private ArrayList<GPS> gpsdata;
+
+    /* Hashmap of DaeguTraffic, DaeguIncident */
     private HashMap<String, DaeguTraffic> daeguTrafficHashMap;
     private HashMap<String, DaeguIncidient> incidientHashMap;
+    private ArrayList<Communication> communications;
+
+    /* Start and End coord */
     private double startX, startY, endX, endY;
+    private boolean ready_to_start = false;
+
     private DataManager() {
         daeguTrafficHashMap = new HashMap<>();
         incidientHashMap = new HashMap<>();
         gpsdata = new ArrayList<>();
+    }
+
+    public void updateGPS(){
+        this.gps_idx++;
     }
 
     public GPS getCurrentGPS() {
@@ -35,6 +50,22 @@ public class DataManager {
             }
         }
         return ourInstance;
+    }
+
+    public ArrayList<Communication> getCommunications() {
+        return communications;
+    }
+
+    public void setCommunications(ArrayList<Communication> communications) {
+        this.communications = communications;
+    }
+
+    public boolean isReady_to_start() {
+        return ready_to_start;
+    }
+
+    public void setReady_to_start(boolean ready_to_start) {
+        this.ready_to_start = ready_to_start;
     }
 
     public HashMap<String, DaeguIncidient> getIncidientHashMap() {

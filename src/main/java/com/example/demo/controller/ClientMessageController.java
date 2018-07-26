@@ -1,68 +1,104 @@
 package com.example.demo.controller;
 
-import com.example.demo.Greeting;
 import com.example.demo.Message;
 import com.example.demo.common.DomParser;
 import com.example.demo.common.OpenAPI;
 import com.example.demo.common.item.Communication;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
+import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Controller
 public class ClientMessageController {
+    @Autowired
+    private SimpMessagingTemplate brokerMessagingTemplate;
 
     @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public String greeting(Message message) throws Exception {
-        Thread.sleep(1); // simulated delay
+//    @SendTo("/topic/greetings")
+    public void greeting(Message message) {
         System.out.println(message.toString());
         double startx, starty, endx, endy;
-        startx = message.getX1();
-        starty = message.getY1();
+        startx = 128.63974000;
+        starty = 35.86604833;
         endx = message.getX2();
         endy = message.getY2();
         double temp;
-        if(startx > endx) {temp = startx; startx = endx; endx = temp;}
-        if(starty > endy) {temp = starty; starty = endy; endy = temp;}
+        if (startx > endx) {
+            temp = startx;
+            startx = endx;
+            endx = temp;
+        }
+        if (starty > endy) {
+            temp = starty;
+            starty = endy;
+            endy = temp;
+        }
         DataManager.getInstance().setStartX(startx);
         DataManager.getInstance().setEndX(endx);
         DataManager.getInstance().setStartY(starty);
         DataManager.getInstance().setEndY(endy);
-        OpenAPI api = new OpenAPI();
-        ArrayList<Communication> com = (ArrayList<Communication>) DomParser.getParseingList(2,api.getOPENAPI(2));
-        HashMap<String, DaeguTraffic> hashMap = DataManager.getInstance().getDaeguTrafficHashMap();
-        int i = 0;
-        JSONArray jsonArray = new JSONArray();
-        for (Communication c: com){
-            JSONObject obj = c.convertJSON();
-
-            if(hashMap.containsKey(c.getRoad_section_id())){
-                DaeguTraffic traffic = hashMap.get(c.getRoad_section_id());
-                System.out.println("===key exist " + i++ + " " + "===");
-                System.out.println(traffic.toString());
-                System.out.println(c.toString());
-                obj.put("sectionNm", traffic.getSectionNm());
-                obj.put("roadNm", traffic.getRoadNm());
-            }
-            else{
-                System.out.println("===key not exist " + i++ + " " + "===");
-                System.out.println(c.toString());
-            }
-            jsonArray.add(obj);
-        }
-        JSONObject _obj = new JSONObject();
-        _obj.put("type", "info");
-        _obj.put("data", jsonArray);
-        System.out.println(_obj.toString());
-        return _obj.toJSONString();
+        MyThread thread = new MyThread(brokerMessagingTemplate);
+        thread.start();
+//        return _obj.toJSONString();
     }
+}
+
+class MyThread extends Thread {
+    @Autowired
+    NodeDao nodeDao;
+    boolean flag = false;
+    private SimpMessagingTemplate simpMessagingTemplate;
+    OpenAPI api = new OpenAPI();
+
+    public MyThread(SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    public void run() {
+        while (true) {
+            ArrayList<Communication> com = (ArrayList<Communication>) DomParser.getParseingList(2, api.getOPENAPI(2));
+            DataManager.getInstance().setCommunications(com);
+            if (flag == false) {
+                DataManager.getInstance().setReady_to_start(true);
+                flag = true;
+            }
+
+            HashMap<String, DaeguTraffic> hashMap = DataManager.getInstance().getDaeguTrafficHashMap();
+            JSONArray jsonArray = new JSONArray();
+            for (Communication c : com) {
+                JSONObject obj = c.convertJSON();
+                if (hashMap.containsKey(c.getRoad_section_id())) {
+                    DaeguTraffic traffic = hashMap.get(c.getRoad_section_id());
+//                    System.out.println(traffic.toString());
+//                    System.out.println(c.toString());
+                    obj.put("sectionNm", traffic.getSectionNm());
+                    obj.put("roadNm", traffic.getRoadNm());
+                }
+                jsonArray.add(obj);
+            }
+            JSONObject _obj = new JSONObject();
+            _obj.put("type", "info");
+            _obj.put("data", jsonArray);
+            System.out.println(_obj.toString());
+            simpMessagingTemplate.convertAndSend("/topic/greetings", _obj.toString());
+            try {
+                System.out.println("Thread Sleep");
+                Thread.sleep(60000);
+                System.out.println("Thread unSleep");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
