@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DomParser {
-    public static Object getParseingList(int flag, InputStream is)
-    {
-        switch(flag){
+    public static Object getParseingList(int flag, InputStream is) {
+        switch (flag) {
             case 1:
                 return process_Contruction(is);
             case 2:
@@ -37,7 +36,7 @@ public class DomParser {
         return null;
     }
 
-    public static ArrayList<Construction> process_Contruction(InputStream is){
+    public static ArrayList<Construction> process_Contruction(InputStream is) {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
@@ -49,7 +48,7 @@ public class DomParser {
         ArrayList<Construction> constructionArrayList = new ArrayList<>();
         NodeList item = document.getElementsByTagName("data");
         System.out.println(item.getLength());
-        for(int idx = 0 ; idx < item.getLength(); idx++){
+        for (int idx = 0; idx < item.getLength(); idx++) {
             Construction cons = new Construction();
             Node node = item.item(idx);
             Element element = (Element) node;
@@ -64,11 +63,11 @@ public class DomParser {
         return constructionArrayList;
     }
 
-    public static ArrayList<Communication> process_Communication(InputStream is){
+    public static ArrayList<Communication> process_Communication(InputStream is) {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("DOMPARSER START");
+        System.out.println("Communication Parsing Start");
 
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
@@ -76,7 +75,7 @@ public class DomParser {
         ArrayList<Communication> communicationArrayList = new ArrayList<>();
         NodeList item = document.getElementsByTagName("data");
         System.out.println(item.getLength());
-        for(int idx = 0 ; idx < item.getLength(); idx++){
+        for (int idx = 0; idx < item.getLength(); idx++) {
             Communication communication = new Communication();
             Node node = item.item(idx);
             Element element = (Element) node;
@@ -89,10 +88,11 @@ public class DomParser {
             communication.setGenerate_date(element.getElementsByTagName("generatedate").item(0).getTextContent());
             communicationArrayList.add(communication);
         }
+        System.out.println("Communication Parsing END");
         return communicationArrayList;
     }
 
-    public static ArrayList<Incidient> process_Incidient(InputStream is){
+    public static ArrayList<Incidient> process_Incidient(InputStream is) {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
@@ -104,7 +104,7 @@ public class DomParser {
         ArrayList<Incidient> incidientArrayList = new ArrayList<>();
         NodeList item = document.getElementsByTagName("data");
         System.out.println(item.getLength());
-        for(int idx = 0 ; idx < item.getLength(); idx++){
+        for (int idx = 0; idx < item.getLength(); idx++) {
             Incidient incidient = new Incidient();
             Node node = item.item(idx);
             Element element = (Element) node;
@@ -124,10 +124,11 @@ public class DomParser {
 
     /**
      * 대구교통소통정보
+     *
      * @param is OpeaAPI Input Stream
      * @return HashMap of DaeguTraffic
      */
-    public static HashMap<String, DaeguTraffic> process_DaeguTraffic(InputStream is){
+    public static HashMap<String, DaeguTraffic> process_DaeguTraffic(InputStream is) {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
@@ -139,7 +140,7 @@ public class DomParser {
         HashMap<String, DaeguTraffic> daeguTraffics = new HashMap<>();
         NodeList item = document.getElementsByTagName("item");
         System.out.println(item.getLength());
-        for(int idx = 0 ; idx < item.getLength(); idx++){
+        for (int idx = 0; idx < item.getLength(); idx++) {
             DaeguTraffic traffic = new DaeguTraffic();
             Node node = item.item(idx);
             Element element = (Element) node;
@@ -155,9 +156,6 @@ public class DomParser {
             traffic.setStartFacNm(element.getElementsByTagName("startFacNm").item(0).getTextContent());
             String key = element.getElementsByTagName("stdLinkId").item(0).getTextContent();
             traffic.setStdLinkId(key);
-            if(daeguTraffics.keySet().contains(key)){
-                System.out.println(key);
-            }
             daeguTraffics.put(key, traffic);
         }
         System.out.println("process_DaeguTraffic END");
@@ -166,10 +164,11 @@ public class DomParser {
 
     /**
      * 대구 돌발정보(사고, 공사)
+     *
      * @param is : OpenAPI Input Stream
      * @return
      */
-    public static HashMap<String, DaeguIncidient> process_DaeguIncidient(InputStream is){
+    public static HashMap<String, DaeguIncidient> process_DaeguIncidient(InputStream is) {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
@@ -181,7 +180,7 @@ public class DomParser {
         HashMap<String, DaeguIncidient> daeguIncidients = new HashMap<>();
         NodeList item = document.getElementsByTagName("item");
         System.out.println(item.getLength());
-        for(int idx = 0 ; idx < item.getLength(); idx++){
+        for (int idx = 0; idx < item.getLength(); idx++) {
             DaeguIncidient daeguIncidient = new DaeguIncidient();
             Node node = item.item(idx);
             Element element = (Element) node;
@@ -193,7 +192,7 @@ public class DomParser {
             daeguIncidient.setIncidentsubcode(Integer.parseInt(element.getElementsByTagName("incidentsubcode").item(0).getTextContent()));
             daeguIncidient.setIncidenttitle(element.getElementsByTagName("incidenttitle").item(0).getTextContent());
             daeguIncidient.setLinkid(element.getElementsByTagName("linkid").item(0).getTextContent());
-            if(element.getElementsByTagName("location").item(0) != null)
+            if (element.getElementsByTagName("location").item(0) != null)
                 daeguIncidient.setLocation(element.getElementsByTagName("location").item(0).getTextContent());
             daeguIncidient.setLogdate(element.getElementsByTagName("logdate").item(0).getTextContent());
             daeguIncidient.setReportdate(element.getElementsByTagName("reportdate").item(0).getTextContent());
@@ -202,10 +201,6 @@ public class DomParser {
             daeguIncidient.setTroublegrade(Integer.parseInt(element.getElementsByTagName("troublegrade").item(0).getTextContent()));
             String key = element.getElementsByTagName("incidentid").item(0).getTextContent();
             daeguIncidient.setIncidentid(key);
-
-            if(daeguIncidients.keySet().contains(key)){
-                System.out.println(key);
-            }
             daeguIncidients.put(key, daeguIncidient);
         }
         System.out.println("process_DaeguIncidient END");

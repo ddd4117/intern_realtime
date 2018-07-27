@@ -28,48 +28,25 @@ public class Scheduler {
     private SimpMessagingTemplate brokerMessagingTemplate;
 
 
-    int gps_idx = 0;
     //ms단위
 
-    @Scheduled(initialDelay = 2000, fixedDelay = 60 * 1000)
-    public void DaeguTrafficScheduled() {
-        OpenAPI api = new OpenAPI();
-        /* National Traffic Infomation */
-//        ArrayList<Communication> communications = (ArrayList<Communication>) DomParser.getParseingList(2, api.getOPENAPI(2));
-//        for (Communication com : communications){
-//            System.out.println(com.getRoad_section_id() + " " + com.getRoad_name_text());
-//        }
-
-
-        /* Daegu Traffic Infomation */
-        DataManager.getInstance().setDaeguTrafficHashMap((HashMap<String, DaeguTraffic>) DomParser.getParseingList(4, api.getOPENAPI(4)));
-//        HashMap<String, DaeguTraffic> trafficeHashMap = DataManager.getInstance().getDaeguTrafficHashMap();
-//        for(String key : trafficeHashMap.keySet()){
-//            DaeguTraffic daeguTraffic = trafficeHashMap.get(key);
-//        }
-
-        /* Daegu Incident Infomation */
-        DataManager.getInstance().setIncidientHashMap((HashMap<String, DaeguIncidient>) DomParser.getParseingList(5, api.getOPENAPI(5)));
-//        HashMap<String, DaeguIncidient> incidientHashMap = DataManager.getInstance().getIncidientHashMap();
-//        JSONArray incidient_json_array = new JSONArray();
-//        for(String key : incidientHashMap.keySet()){
-//            DaeguIncidient incidient = incidientHashMap.get(key);
-//            JSONObject jsonObject = incidient.convertJsonInfo();
-//            incidient_json_array.add(jsonObject);
-//        }
-//        JSONObject temp = new JSONObject();
-//        temp.put("type", "info");
-//        temp.put("data", incidient_json_array.toJSONString());
-//        System.out.println(temp.toJSONString());
-//        this.brokerMessagingTemplate.convertAndSend("/topic/greetings", temp.toJSONString());
-    }
+//    @Scheduled(initialDelay = 2000, fixedDelay = 60 * 1000)
+//    public void DaeguTrafficScheduled() {
+//        OpenAPI api = new OpenAPI();
+//        /* Daegu Traffic Infomation */
+//        DataManager.getInstance().setDaeguTrafficHashMap((HashMap<String, DaeguTraffic>) DomParser.getParseingList(4, api.getOPENAPI(4)));
+//        /* Daegu Incident Infomation */
+//        DataManager.getInstance().setIncidientHashMap((HashMap<String, DaeguIncidient>) DomParser.getParseingList(5, api.getOPENAPI(5)));
+////        this.brokerMessagingTemplate.convertAndSend("/topic/greetings", temp.toJSONString());
+//    }
 
     @Scheduled(initialDelay = 2000, fixedDelay = 1000)
     public void GPSUpdate() { // 실행될 로직 }
+        if (!DataManager.getInstance().isReady_to_start()) return;
         GPS gps = DataManager.getInstance().getCurrentGPS();
         DataManager.getInstance().updateGPS();
         JSONObject js = new JSONObject();
-        js.put("type", "marker");
+        js.put("type", "marker_info");
         js.put("x", gps.getX());
         js.put("y", gps.getY());
         if (DataManager.getInstance().isReady_to_start()) {
@@ -78,9 +55,8 @@ public class Scheduler {
             ArrayList<Communication> communications = DataManager.getInstance().getCommunications();
             HashMap<String, DaeguTraffic> daeguTrafficHashMap = DataManager.getInstance().getDaeguTrafficHashMap();
             for (String str : node_id_list) {
-                System.out.println(str);
                 for (Communication communication : communications) {
-                    if(communication.getEnd_node_id().equals(str) || communication.getStart_node_id().equals(str)){
+                    if (communication.getEnd_node_id().equals(str) || communication.getStart_node_id().equals(str)) {
                         JSONObject object = communication.convertJSON();
                         DaeguTraffic traffic = daeguTrafficHashMap.get(communication.getRoad_section_id());
                         object.put("sectionNm", traffic.getSectionNm());
@@ -89,11 +65,56 @@ public class Scheduler {
                     }
                 }
             }
-            if(jsonArray.size() != 0) js.put("data", jsonArray);
+            js.put("close_data", jsonArray);
         }
-        System.out.println(js.toString());
-//        this.brokerMessagingTemplate.convertAndSend("/topic/greetings", js.toString());
+        HashMap<String, DaeguIncidient> incidientHashMap = DataManager.getInstance().getIncidientHashMap();
+        JSONArray incidient_json_array = new JSONArray();
+        for (String key : incidientHashMap.keySet()) {
+            DaeguIncidient incidient = incidientHashMap.get(key);
+            double dis = distance(incidient.getCoordy(), incidient.getCoordx(), gps.getY(), gps.getX());
+            if (dis < 1) {
+                JSONObject jsonObject = incidient.convertJsonInfo();
+                incidient_json_array.add(jsonObject);
+            }
+        }
+        js.put("incident", incidient_json_array);
+        System.out.println(js.toJSONString());
+        this.brokerMessagingTemplate.convertAndSend("/topic/greetings", js.toString());
     }
+
+
+    /**
+     * 두 지점간의 거리 계산
+     *
+     * @param lat1 지점 1 위도
+     * @param lon1 지점 1 경도
+     * @param lat2 지점 2 위도
+     * @param lon2 지점 2 경도
+     * @return
+     */
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+        return (dist);
+    }
+
+
+    // This function converts decimal degrees to radians
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    // This function converts radians to decimal degrees
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
+
 }
 
 /* 도로값 받아오기 */

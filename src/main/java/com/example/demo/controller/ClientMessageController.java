@@ -4,6 +4,7 @@ import com.example.demo.Message;
 import com.example.demo.common.DomParser;
 import com.example.demo.common.OpenAPI;
 import com.example.demo.common.item.Communication;
+import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
 import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 public class ClientMessageController {
     @Autowired
     private SimpMessagingTemplate brokerMessagingTemplate;
+    MyThread thread;
 
     @MessageMapping("/hello")
 //    @SendTo("/topic/greetings")
@@ -47,7 +49,8 @@ public class ClientMessageController {
         DataManager.getInstance().setEndX(endx);
         DataManager.getInstance().setStartY(starty);
         DataManager.getInstance().setEndY(endy);
-        MyThread thread = new MyThread(brokerMessagingTemplate);
+        thread = new MyThread(brokerMessagingTemplate);
+        thread.setDaemon(true);
         thread.start();
 //        return _obj.toJSONString();
     }
@@ -66,7 +69,13 @@ class MyThread extends Thread {
 
     public void run() {
         while (true) {
+            /* Start to End area Information */
             ArrayList<Communication> com = (ArrayList<Communication>) DomParser.getParseingList(2, api.getOPENAPI(2));
+            /* Daegu Traffic Information */
+            DataManager.getInstance().setDaeguTrafficHashMap((HashMap<String, DaeguTraffic>) DomParser.getParseingList(4, api.getOPENAPI(4)));
+            /* Daegu Incident Information */
+            DataManager.getInstance().setIncidientHashMap((HashMap<String, DaeguIncidient>) DomParser.getParseingList(5, api.getOPENAPI(5)));
+
             DataManager.getInstance().setCommunications(com);
             if (flag == false) {
                 DataManager.getInstance().setReady_to_start(true);
@@ -88,12 +97,12 @@ class MyThread extends Thread {
             }
             JSONObject _obj = new JSONObject();
             _obj.put("type", "info");
-            _obj.put("data", jsonArray);
+            _obj.put("total_data", jsonArray);
             System.out.println(_obj.toString());
             simpMessagingTemplate.convertAndSend("/topic/greetings", _obj.toString());
             try {
                 System.out.println("Thread Sleep");
-                Thread.sleep(60000);
+                Thread.sleep(60 * 1000);
                 System.out.println("Thread unSleep");
             } catch (InterruptedException e) {
                 e.printStackTrace();

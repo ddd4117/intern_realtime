@@ -15,7 +15,7 @@
 //
 function move_mainCursor(data){
     // alert(data.x + " " + data.y);
-    marker1.setPosition(new naver.maps.LatLng(data.x, data.y))
+    marker1.setPosition(new naver.maps.LatLng(data.y, data.x))
 }
 
 var listener1, listener2;

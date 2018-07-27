@@ -51,10 +51,12 @@ public class TCP_Connection_Thread implements Runnable {
             }
         }
     }
+
     class ServerReceiver extends Thread {
         Socket socket;
         DataInputStream in;
         DataOutputStream out;
+
         ServerReceiver(Socket socket) {
             this.socket = socket;
             try {
@@ -63,6 +65,7 @@ public class TCP_Connection_Thread implements Runnable {
             } catch (IOException e) {
             }
         }
+
         public void run() {
             String name = "";
             try {

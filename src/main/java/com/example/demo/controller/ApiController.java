@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ApiController {
     @Autowired
     NodeDao nodeDao;
+
     @RequestMapping("/main")
     public ModelAndView index(ModelAndView mav) {
         mav.setViewName("main");

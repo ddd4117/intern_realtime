@@ -16,27 +16,27 @@ public class NodeDao {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public List<String> getNodeID(GPS gps){
+    public List<String> getNodeID(GPS gps) {
         double minX = gps.getX() - 0.003;
         double maxX = gps.getX() + 0.003;
         double minY = gps.getY() - 0.003;
         double maxY = gps.getY() + 0.003;
-        String query = "select node_id from node.node_info i where i.Y > " + minY + " and i.Y < "+ maxY +" and i.X > " + minX +" and i.X < " + maxX;
+        String query = "select node_id from node.node_info i where i.Y > " + minY + " and i.Y < " + maxY + " and i.X > " + minX + " and i.X < " + maxX;
         System.out.println(query);
-        List<String> stringList = jdbcTemplate.query(query, new RowMapper<String>(){
+        List<String> stringList = jdbcTemplate.query(query, new RowMapper<String>() {
             @Override
-            public String mapRow(ResultSet rs, int rowNum) throws SQLException{
+            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getString(1);
             }
         });
         return stringList;
     }
 
-    public List<Node> getNode(){
+    public List<Node> getNode() {
         String query = "select * from node.node_info";
-        List<Node> nodeList = jdbcTemplate.query(query, new RowMapper<Node>(){
+        List<Node> nodeList = jdbcTemplate.query(query, new RowMapper<Node>() {
             @Override
-            public Node mapRow(ResultSet rs, int rowNum) throws SQLException{
+            public Node mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Node node = new Node();
                 node.setNode_id(rs.getString(1));
                 node.setX(rs.getDouble(2));
@@ -47,7 +47,7 @@ public class NodeDao {
                 return node;
             }
         });
-        for (Node n : nodeList){
+        for (Node n : nodeList) {
             System.out.println(n.toString());
         }
         return nodeList;

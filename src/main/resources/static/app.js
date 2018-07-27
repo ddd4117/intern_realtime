@@ -25,7 +25,11 @@ function connect() {
                 move_mainCursor(jsondata);
             }
             else if (jsondata.type == "info") {
-                process_JSONdata(jsondata.data);
+                // process_JSONdata(jsondata.total_data);
+            }
+            else if(jsondata.type == "marker_info"){
+                move_mainCursor(jsondata);
+                process_JSONdata(jsondata.close_data);
             }
         });
     });

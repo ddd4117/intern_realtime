@@ -31,12 +31,12 @@ public class DataManager {
         gpsdata = new ArrayList<>();
     }
 
-    public void updateGPS(){
+    public void updateGPS() {
         this.gps_idx++;
     }
 
     public GPS getCurrentGPS() {
-        if(gps_idx >= gpsdata.size()) return this.gpsdata.get(gpsdata.size()-1);
+        if (gps_idx >= gpsdata.size()) return this.gpsdata.get(gpsdata.size() - 1);
         GPS gps = this.gpsdata.get(gps_idx);
         return gps;
     }

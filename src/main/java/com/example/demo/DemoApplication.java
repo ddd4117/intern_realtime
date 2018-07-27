@@ -37,16 +37,15 @@ public class DemoApplication {
         return new ConcurrentTaskScheduler();
     }
 
-    public static void loadFile()
-    {
+    public static void loadFile() {
         ArrayList<GPS> dataArrayList = new ArrayList<>();
         try {
-            File file = new ClassPathResource(".\\static\\main_gps.txt").getFile();
+            File file = new ClassPathResource(".\\static\\gps3.txt").getFile();
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = "";
-            while( (line = bufferedReader.readLine()) != null ){
-                if(line == "") continue;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line == "") continue;
                 dataArrayList.add(new GPS(line));
             }
             DataManager.getInstance().setGpsdata(dataArrayList);
