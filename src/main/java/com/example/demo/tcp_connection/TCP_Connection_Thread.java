@@ -1,5 +1,11 @@
 package com.example.demo.tcp_connection;
 
+import com.example.demo.common.item.ext.ExternalCarInfo;
+import com.google.gson.Gson;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -70,13 +76,17 @@ public class TCP_Connection_Thread implements Runnable {
             String name = "";
             try {
                 name = in.readUTF();
+                Gson gson = new Gson();
                 sendToAll("#" + name + "is connected.");
                 clients.put(name, out);
                 System.out.println("현재 서버접속자 수는 "
                         + clients.size() + "입니다.");
+
                 while (in != null) {
                     String msg = in.readUTF();
-                    System.out.println(msg);
+                    ExternalCarInfo externalCarInfo = gson.fromJson(msg, ExternalCarInfo.class);
+                    System.out.println(externalCarInfo.toString());
+                    System.out.println(gson.toJson(externalCarInfo));
                 }
             } catch (IOException e) {
                 // ignore

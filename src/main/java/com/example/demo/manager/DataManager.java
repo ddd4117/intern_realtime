@@ -4,6 +4,7 @@ import com.example.demo.common.item.Communication;
 import com.example.demo.common.item.GPS;
 import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
+import com.example.demo.common.item.ext.ExternalCarInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +26,14 @@ public class DataManager {
     private double startX, startY, endX, endY;
     private boolean ready_to_start = false;
 
+    /* External Car Informataion */
+    private ArrayList<ExternalCarInfo> externalCarInfoArrayLIst;
+
     private DataManager() {
         daeguTrafficHashMap = new HashMap<>();
         incidientHashMap = new HashMap<>();
         gpsdata = new ArrayList<>();
+        externalCarInfoArrayLIst = new ArrayList<>();
     }
 
     public void updateGPS() {
@@ -138,5 +143,13 @@ public class DataManager {
 
     public void setEndY(double endY) {
         this.endY = endY;
+    }
+
+    public ArrayList<ExternalCarInfo> getExternalCarInfoArrayLIst() {
+        return externalCarInfoArrayLIst;
+    }
+
+    public void setExternalCarInfoArrayLIst(ArrayList<ExternalCarInfo> externalCarInfoArrayLIst) {
+        this.externalCarInfoArrayLIst = externalCarInfoArrayLIst;
     }
 }

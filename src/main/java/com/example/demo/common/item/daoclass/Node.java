@@ -1,4 +1,4 @@
-package com.example.demo.common.item.dao;
+package com.example.demo.common.item.daoclass;
 
 public class Node {
     private String node_id;

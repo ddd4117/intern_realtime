@@ -1,7 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.common.item.GPS;
-import com.example.demo.common.item.dao.Node;
+import com.example.demo.common.item.daoclass.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +22,7 @@ public class NodeDao {
         double minY = gps.getY() - 0.003;
         double maxY = gps.getY() + 0.003;
         String query = "select node_id from node.node_info i where i.Y > " + minY + " and i.Y < " + maxY + " and i.X > " + minX + " and i.X < " + maxX;
-        System.out.println(query);
+//        System.out.println(query);
         List<String> stringList = jdbcTemplate.query(query, new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
