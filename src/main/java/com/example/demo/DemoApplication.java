@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class DemoApplication {
 
     public static void main(String[] args) {
-
         loadFile();
         SpringApplication.run(DemoApplication.class, args);
         TCP_Connection_Thread tcp_connection = new TCP_Connection_Thread();

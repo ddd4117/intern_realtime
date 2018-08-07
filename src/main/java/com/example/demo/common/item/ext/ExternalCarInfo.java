@@ -1,6 +1,8 @@
 package com.example.demo.common.item.ext;
 
 
+import org.json.simple.JSONObject;
+
 public class ExternalCarInfo {
     private double x;
     private double y;
@@ -17,6 +19,16 @@ public class ExternalCarInfo {
                 ", type='" + type + '\'' +
                 ", info='" + info + '\'' +
                 '}';
+    }
+
+    public JSONObject convertJsonInfo() {
+        JSONObject obj = new JSONObject();
+        obj.put("x", x);
+        obj.put("y", y);
+        obj.put("id", id);
+        obj.put("type", type);
+        obj.put("info", info);
+        return obj;
     }
 
     public double getX() {

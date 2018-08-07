@@ -1,13 +1,13 @@
 package com.example.demo;
 
-import com.example.demo.common.DomParser;
-import com.example.demo.common.OpenAPI;
 import com.example.demo.common.item.Communication;
 import com.example.demo.common.item.GPS;
 import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
+import com.example.demo.common.item.ext.ExternalCarInfo;
 import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +49,7 @@ public class Scheduler {
         js.put("type", "marker_info");
         js.put("x", gps.getX());
         js.put("y", gps.getY());
+        /* get closed node data */
         if (DataManager.getInstance().isReady_to_start()) {
             JSONArray jsonArray = new JSONArray();
             List<String> node_id_list = nodeDao.getNodeID(gps);
@@ -67,6 +68,8 @@ public class Scheduler {
             }
             js.put("close_data", jsonArray);
         }
+
+        /* get Incident data */
         HashMap<String, DaeguIncidient> incidientHashMap = DataManager.getInstance().getIncidientHashMap();
         JSONArray incidient_json_array = new JSONArray();
         for (String key : incidientHashMap.keySet()) {
@@ -78,6 +81,23 @@ public class Scheduler {
             }
         }
         js.put("incident", incidient_json_array);
+
+        /* get external information */
+        Gson gson = new Gson();
+        JSONArray ext_array = new JSONArray();
+        for (ExternalCarInfo ext : DataManager.getInstance().getExternalAccident()) {
+            double dis = distance(ext.getY(), ext.getX(), gps.getY(), gps.getX());
+            if (dis < 1) {
+                ext_array.add(ext.convertJsonInfo());
+            }
+        }
+        for (ExternalCarInfo ext : DataManager.getInstance().getExternalSuddenCase()) {
+            double dis = distance(ext.getY(), ext.getX(), gps.getY(), gps.getX());
+            if (dis < 1) {
+                ext_array.add(ext.convertJsonInfo());
+            }
+        }
+        js.put("ext_information", ext_array);
         System.out.println(js.toJSONString());
         this.brokerMessagingTemplate.convertAndSend("/topic/greetings", js.toString());
     }

@@ -6,7 +6,7 @@ public class DaeguIncidient {
     private double coordx = 0.0;
     private double coordy = 0.0;
     private String enddate = "";
-    private int incidientcode = 0;
+    private int incidientcode = 0; // 1 사고, 2 공사, 3 행사, 4 기상
     private String incidentid ="";
     private int incidentsubcode = 0;
     private String incidenttitle ="";

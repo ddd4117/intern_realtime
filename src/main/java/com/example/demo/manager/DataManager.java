@@ -27,13 +27,14 @@ public class DataManager {
     private boolean ready_to_start = false;
 
     /* External Car Informataion */
-    private ArrayList<ExternalCarInfo> externalCarInfoArrayLIst;
+    private ArrayList<ExternalCarInfo> externalAccident, externalSuddenCase;
 
     private DataManager() {
         daeguTrafficHashMap = new HashMap<>();
         incidientHashMap = new HashMap<>();
         gpsdata = new ArrayList<>();
-        externalCarInfoArrayLIst = new ArrayList<>();
+        externalAccident = new ArrayList<>();
+        externalSuddenCase = new ArrayList<>();
     }
 
     public void updateGPS() {
@@ -145,11 +146,19 @@ public class DataManager {
         this.endY = endY;
     }
 
-    public ArrayList<ExternalCarInfo> getExternalCarInfoArrayLIst() {
-        return externalCarInfoArrayLIst;
+    public ArrayList<ExternalCarInfo> getExternalAccident() {
+        return externalAccident;
     }
 
-    public void setExternalCarInfoArrayLIst(ArrayList<ExternalCarInfo> externalCarInfoArrayLIst) {
-        this.externalCarInfoArrayLIst = externalCarInfoArrayLIst;
+    public void setExternalAccident(ArrayList<ExternalCarInfo> externalAccident) {
+        this.externalAccident = externalAccident;
+    }
+
+    public ArrayList<ExternalCarInfo> getExternalSuddenCase() {
+        return externalSuddenCase;
+    }
+
+    public void setExternalSuddenCase(ArrayList<ExternalCarInfo> externalSuddenCase) {
+        this.externalSuddenCase = externalSuddenCase;
     }
 }

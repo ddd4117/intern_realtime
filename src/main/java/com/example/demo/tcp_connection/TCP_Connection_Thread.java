@@ -1,10 +1,9 @@
 package com.example.demo.tcp_connection;
 
+import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.ext.ExternalCarInfo;
+import com.example.demo.manager.DataManager;
 import com.google.gson.Gson;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -72,6 +71,26 @@ public class TCP_Connection_Thread implements Runnable {
             }
         }
 
+        public boolean isDuplicate(double x, double y) {
+            HashMap<String, DaeguIncidient> hashMap = DataManager.getInstance().getIncidientHashMap();
+            for (String key : hashMap.keySet()) {
+                DaeguIncidient incidient = hashMap.get(key);
+                if(incidient.getIncidientcode() != 1) continue; // it is not a accident code
+
+                double dis = distance(incidient.getCoordy(), incidient.getCoordx(), y, x);
+                if (dis < 50) {
+                    return true;
+                }
+            }
+            for (ExternalCarInfo car : DataManager.getInstance().getExternalAccident()) {
+                double dis = distance(car.getY(), car.getX(), y, x);
+                if (dis < 50) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void run() {
             String name = "";
             try {
@@ -85,8 +104,24 @@ public class TCP_Connection_Thread implements Runnable {
                 while (in != null) {
                     String msg = in.readUTF();
                     ExternalCarInfo externalCarInfo = gson.fromJson(msg, ExternalCarInfo.class);
-                    System.out.println(externalCarInfo.toString());
                     System.out.println(gson.toJson(externalCarInfo));
+                    switch (externalCarInfo.getType()) {
+                        case "accident":
+                            boolean flag = isDuplicate(externalCarInfo.getX(), externalCarInfo.getY());
+                            /* not duplicated */
+                            if (!flag) {
+                                DataManager.getInstance().getExternalAccident().add(externalCarInfo);
+                                System.out.println("add external information");
+                            }
+                            break;
+                        case "sudden case":
+                            DataManager.getInstance().getExternalSuddenCase().add(externalCarInfo);
+                            System.out.println("add sudden case information");
+                            break;
+                        default:
+                            System.out.println("exception-");
+                            break;
+                    }
                 }
             } catch (IOException e) {
                 // ignore
@@ -101,4 +136,37 @@ public class TCP_Connection_Thread implements Runnable {
             } // try
         } // run
     } // ReceiverThread
+
+
+    /**
+     * 두 지점간의 거리 계산
+     *
+     * @param lat1 지점 1 위도
+     * @param lon1 지점 1 경도
+     * @param lat2 지점 2 위도
+     * @param lon2 지점 2 경도
+     * @return
+     */
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1609.344;
+
+        return (dist);
+    }
+
+    // This function converts decimal degrees to radians
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    // This function converts radians to decimal degrees
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
 }
