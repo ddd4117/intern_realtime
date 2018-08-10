@@ -7,6 +7,7 @@ public class Message {
     double x2;
     double y1;
     double y2;
+
     public Message() {
     }
 

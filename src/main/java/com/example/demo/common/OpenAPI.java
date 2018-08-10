@@ -6,10 +6,7 @@ import com.example.demo.manager.DataManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.net.*;
 
 public class OpenAPI {
     final static String auth_key = "1531382613171"; // 1531382610296
@@ -49,25 +46,27 @@ public class OpenAPI {
                 System.out.println("Exception");
                 return null;
         }
-        try {
-            URL Url = new URL(Address);
-            con = (HttpURLConnection) Url.openConnection();
-            con.setConnectTimeout(2000);
-            con.setReadTimeout(5000);
-            con.setRequestMethod(protocol);
-            con.setRequestProperty("User-Agent", USER_AGENT);
-            InputStream is = con.getInputStream();
-            return is;
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                URL Url = new URL(Address);
+                con = (HttpURLConnection) Url.openConnection();
+                con.setConnectTimeout(2000);
+                con.setReadTimeout(5000);
+                con.setRequestMethod(protocol);
+                con.setRequestProperty("User-Agent", USER_AGENT);
+                InputStream is = con.getInputStream();
+                return is;
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (SocketTimeoutException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
     }
-
 }

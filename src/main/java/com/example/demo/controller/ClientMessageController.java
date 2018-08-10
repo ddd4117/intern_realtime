@@ -8,6 +8,7 @@ import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
 import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
+import com.example.demo.tcp_connection.External_Server_Connection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

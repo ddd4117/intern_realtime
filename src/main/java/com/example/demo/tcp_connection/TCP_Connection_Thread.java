@@ -17,12 +17,15 @@ import java.util.Iterator;
 public class TCP_Connection_Thread implements Runnable {
     ServerSocket serverSocket = null;
     HashMap clients;
-
+    External_Server_Connection esp;
     public TCP_Connection_Thread() {
         try {
             serverSocket = new ServerSocket(5000);
             clients = new HashMap();
             Collections.synchronizedMap(clients);
+
+            esp = new External_Server_Connection("127.0.0.1");
+            esp.start();
             System.out.println("Connection Ready.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,7 +78,7 @@ public class TCP_Connection_Thread implements Runnable {
             HashMap<String, DaeguIncidient> hashMap = DataManager.getInstance().getIncidientHashMap();
             for (String key : hashMap.keySet()) {
                 DaeguIncidient incidient = hashMap.get(key);
-                if(incidient.getIncidientcode() != 1) continue; // it is not a accident code
+                if (incidient.getIncidientcode() != 1) continue; // it is not a accident code
 
                 double dis = distance(incidient.getCoordy(), incidient.getCoordx(), y, x);
                 if (dis < 50) {
@@ -111,6 +114,8 @@ public class TCP_Connection_Thread implements Runnable {
                             /* not duplicated */
                             if (!flag) {
                                 DataManager.getInstance().getExternalAccident().add(externalCarInfo);
+                                esp.clientSender.out.writeUTF(msg);
+                                esp.clientSender.out.flush();
                                 System.out.println("add external information");
                             }
                             break;

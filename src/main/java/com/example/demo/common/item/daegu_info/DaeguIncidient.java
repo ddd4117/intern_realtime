@@ -21,10 +21,10 @@ public class DaeguIncidient {
     public JSONObject convertJsonInfo()
     {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("coordx", coordx);
-        jsonObject.put("coordy", coordy);
+        jsonObject.put("x", coordx);
+        jsonObject.put("y", coordy);
         jsonObject.put("enddate", enddate);
-        jsonObject.put("incidientcode", incidientcode);
+        jsonObject.put("incidentcode", incidientcode);
         jsonObject.put("incidentsubcode", incidentsubcode);
         jsonObject.put("incidenttitle", incidenttitle);
         jsonObject.put("location",location);
