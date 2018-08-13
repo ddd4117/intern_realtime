@@ -30,8 +30,8 @@ public class ClientMessageController {
     public void greeting(Message message) {
         System.out.println(message.toString());
         double startx, starty, endx, endy;
-        startx = 128.63974000;
-        starty = 35.86604833;
+        startx = 128.596258;
+        starty = 35.903477;
         endx = message.getX2();
         endy = message.getY2();
         double temp;

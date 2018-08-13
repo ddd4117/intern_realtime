@@ -39,7 +39,7 @@ public class DemoApplication {
     public static void loadFile() {
         ArrayList<GPS> dataArrayList = new ArrayList<>();
         try {
-            File file = new ClassPathResource(".\\static\\gps4.txt").getFile();
+            File file = new ClassPathResource(".\\static\\main.txt").getFile();
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = "";
