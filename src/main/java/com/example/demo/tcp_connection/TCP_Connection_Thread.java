@@ -5,6 +5,7 @@ import com.example.demo.common.item.ext.ExternalCarInfo;
 import com.example.demo.manager.DataManager;
 import com.google.gson.Gson;
 
+import javax.xml.crypto.Data;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,6 +28,8 @@ public class TCP_Connection_Thread implements Runnable {
             esp = new External_Server_Connection("127.0.0.1");
             esp.start();
             System.out.println("Connection Ready.");
+            DataManager.getInstance().getExternalSuddenCase().add(new ExternalCarInfo());
+            DataManager.getInstance().getExternalAccident().add(new ExternalCarInfo());
         } catch (IOException e) {
             e.printStackTrace();
         }

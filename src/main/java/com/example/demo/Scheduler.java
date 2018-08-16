@@ -28,7 +28,7 @@ public class Scheduler {
     private SimpMessagingTemplate brokerMessagingTemplate;
 
     /* repeat this method per 1 second */
-    @Scheduled(initialDelay = 2000, fixedDelay = 1000)
+    @Scheduled(initialDelay = 2000, fixedDelay = 2000)
     public void GPSUpdate() { // 실행될 로직 }
         if (!DataManager.getInstance().isReady_to_start()) return;
         GPS gps = DataManager.getInstance().getCurrentGPS();
@@ -37,6 +37,7 @@ public class Scheduler {
         js.put("type", "marker_info");
         js.put("x", gps.getX());
         js.put("y", gps.getY());
+
         /* get closed node data */
         if (DataManager.getInstance().isReady_to_start()) {
             JSONArray jsonArray = new JSONArray();
@@ -48,8 +49,10 @@ public class Scheduler {
                     if (communication.getEnd_node_id().equals(str) || communication.getStart_node_id().equals(str)) {
                         JSONObject object = communication.convertJSON();
                         DaeguTraffic traffic = daeguTrafficHashMap.get(communication.getRoad_section_id());
-                        object.put("sectionNm", traffic.getSectionNm());
-                        object.put("roadNm", traffic.getRoadNm());
+                        if(traffic.getSectionNm() != null)
+                            object.put("sectionNm", traffic.getSectionNm());
+                        if(traffic.getRoadNm() != null)
+                            object.put("roadNm", traffic.getRoadNm());
                         jsonArray.add(object);
                     }
                 }

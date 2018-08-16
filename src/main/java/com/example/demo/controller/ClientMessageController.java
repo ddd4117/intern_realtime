@@ -4,8 +4,10 @@ import com.example.demo.Message;
 import com.example.demo.common.DomParser;
 import com.example.demo.common.OpenAPI;
 import com.example.demo.common.item.Communication;
+import com.example.demo.common.item.GPS;
 import com.example.demo.common.item.daegu_info.DaeguIncidient;
 import com.example.demo.common.item.daegu_info.DaeguTraffic;
+import com.example.demo.common.item.ext.ExternalCarInfo;
 import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
 import com.example.demo.tcp_connection.External_Server_Connection;
@@ -23,17 +25,31 @@ import java.util.HashMap;
 public class ClientMessageController {
     @Autowired
     private SimpMessagingTemplate brokerMessagingTemplate;
-    MyThread thread;
 
+    MyThread thread;
+    GPS gps = DataManager.getInstance().getGpsdata().get(0);
+    @MessageMapping("/init")
+    public void init(String str){
+        System.out.println(str);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", "init");
+        jsonObject.put("x", gps.getX());
+        jsonObject.put("y", gps.getY());
+        System.out.println(jsonObject.toString());
+        brokerMessagingTemplate.convertAndSend("/topic/greetings", jsonObject.toJSONString());
+    }
     @MessageMapping("/hello")
 //    @SendTo("/topic/greetings")
     public void greeting(Message message) {
         System.out.println(message.toString());
         double startx, starty, endx, endy;
-        startx = 128.596258;
-        starty = 35.903477;
+        startx = gps.getX();
+        starty = gps.getY();
+
         endx = message.getX2();
         endy = message.getY2();
+
         double temp;
         if (startx > endx) {
             temp = startx;
@@ -52,6 +68,7 @@ public class ClientMessageController {
         thread = new MyThread(brokerMessagingTemplate);
         thread.setDaemon(true);
         thread.start();
+        DataManager.getInstance().getExternalAccident().add(new ExternalCarInfo(128.6262925, 35.8698694, "1234", "accident", "car"));
 //        return _obj.toJSONString();
     }
 }

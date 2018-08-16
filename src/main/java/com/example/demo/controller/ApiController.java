@@ -1,9 +1,12 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.common.item.GPS;
 import com.example.demo.dao.NodeDao;
 import com.example.demo.manager.DataManager;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,12 +14,13 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ApiController {
     @Autowired
-    NodeDao nodeDao;
+    private SimpMessagingTemplate brokerMessagingTemplate;
 
     @RequestMapping("/main")
     public ModelAndView index(ModelAndView mav) {
-        mav.setViewName("main");
-        nodeDao.getNodeID(DataManager.getInstance().getCurrentGPS());
+        mav.setViewName("index");
+        System.out.println("index");
+
 //        OpenAPI api = new OpenAPI();
 //        InputStream is = api.getOPENAPI(2);
 //        ArrayList<Construction> consArray = (ArrayList<Construction>) DomParser.getParseingList(2,is);

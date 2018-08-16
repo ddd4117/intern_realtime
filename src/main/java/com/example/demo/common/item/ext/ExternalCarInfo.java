@@ -10,6 +10,25 @@ public class ExternalCarInfo {
     private String type;
     private String info;
 
+    public ExternalCarInfo() {
+    }
+
+    /**
+     *
+     * @param x 경도
+     * @param y 위도
+     * @param id 차량번호
+     * @param type 대분류
+     * @param info 소분류
+     */
+    public ExternalCarInfo(double x, double y, String id, String type, String info) {
+        this.x = x;
+        this.y = y;
+        this.id = id;
+        this.type = type;
+        this.info = info;
+    }
+
     @Override
     public String toString() {
         return "ExternalCarInfo{" +
