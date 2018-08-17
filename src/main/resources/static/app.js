@@ -1,5 +1,5 @@
 var stompClient = null;
-var checkAcc = false;
+var checkAcc=false;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -29,16 +29,18 @@ function connect() {
                 startY = jsondata.x;
                 initMap();
                 setCarMarker(startX, startY);
+                map.setZoom(8);
             }
             if (jsondata.type == "marker_info") {
                 changeStep(1);
+                checkAcc=false;
                 parse_incident_Data(jsondata.incident);
                 parse_ext_Data(jsondata.ext_information);
-                parse_total_road(jsondata.close_data, 2);
+                parse_close_road(jsondata.close_data);
                 move_mainCursor(jsondata);
             }
             if (jsondata.type == "info") {
-                parse_total_road(jsondata.total_data, 1);
+                parse_total_road(jsondata.total_data);
                 changeStep(1);
             }
 
@@ -59,8 +61,8 @@ function sendinit() {
 }
 
 function sendName() {
-    var x1 = routeY[0];
-    var y1 = routeX[0];
+    var x1 = startX;
+    var y1 = startY;
     var x2 = destination.position.lng();
     var y2 = destination.position.lat();
     var data = {
@@ -71,10 +73,6 @@ function sendName() {
         'text': "song"
     }
     stompClient.send("/app/hello", {}, JSON.stringify(data));
-}
-
-function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
 }
 
 $(function () {
@@ -91,7 +89,72 @@ $(function () {
     });
 });
 
-function parse_total_road(data, color) {
+function parse_close_road(data) {
+
+    if (data == null || data[0] == null) {
+        return;
+    }
+
+    $("#text5").empty();
+    $("#text5").append("<tr>");
+    $("#text5").append("<th> <FONT SIZE=\"1\">인접 도로 정보 (" + data.length + ")</FONT></th>");
+    $("#text5").append("<th> <FONT SIZE=\"1\">통행 속도</br>(소요시간)</FONT></th>");
+    $("#text5").append("</tr>");
+
+    console.log("인접 도로 갯수 : " + data.length);
+    for (var i = 0; i < data.length; i++) {
+        var obj = data[i];
+        if (obj.roadNm != null) {
+            $("#text5").append("<tr>");
+            $("#text5").append("<td> <FONT SIZE=\"1\">" + obj.roadNm + "</FONT>");
+            switch (obj.sectionInfoCd) {
+                case "01":
+                    $("#text5").append("<FONT COLOR='green' SIZE=\"1\">- 원활</FONT>");
+                    break;
+                case "02":
+                    $("#text5").append("<FONT COLOR='yellow' SIZE=\"1\">- 서행</FONT>");
+                    break;
+                case "03":
+                    $("#text5").append("<FONT COLOR='red' SIZE=\"1\">- 혼잡</FONT>");
+                    break;
+            }
+            $("#text5").append("</td>");
+            $("#text5").append("</tr>");
+
+            $("#text5").append("<tr>");
+            $("#text5").append("<td> <FONT SIZE=\"1\">" + "(" + obj.sectionNm + ")" + "</FONT></td>");
+            $("#text5").append("<td> <FONT SIZE=\"1\"> " + obj.avg_speed + " (" + obj.travel_time + ")" + "</FONT></td>");
+            $("#text5").append("</tr>");
+
+            /*      $("#text5").append("<tr>");
+                  $("#text5").append("<td> <FONT SIZE=\"1\">" + obj.roadNm + "</FONT>");
+                  switch (obj.sectionInfoCd) {
+                      case "01":
+                          $("#text5").append("<FONT COLOR='green' SIZE=\"1\">- 원활</FONT>");
+                          break;
+                      case "02":
+                          $("#text5").append("<FONT COLOR='yellow' SIZE=\"1\">- 서행</FONT>");
+                          break;
+                      case "03":
+                          $("#text5").append("<FONT COLOR='red' SIZE=\"1\">- 혼잡</FONT>");
+                          break;
+                  }
+                  $("#text5").append("</td>");
+                  $("#text5").append("</tr>");
+
+                  $("#text5").append("<tr>");
+                  $("#text5").append("<td> <FONT SIZE=\"1\">" + "(" + obj.sectionNm + ")" + "</FONT></td>");
+                  $("#text5").append("<td> <FONT SIZE=\"1\"> " + obj.linkSpeed + " (" + obj.linkTime + ")" + "</FONT></td>");
+                  $("#text5").append("</tr>");
+      */
+            $("#text5").append("<tr>");
+            $("#text5").append("</br>");
+            $("#text5").append("</tr>");
+        }
+    }
+}
+
+function parse_total_road(data) {
 
     if (data == null || data[0] == null) {
         return;
@@ -99,11 +162,8 @@ function parse_total_road(data, color) {
 
     $("#text4").empty();
     $("#text4").append("<tr>");
-    if (color == 1) {
-        $("#text4").append("<th> <FONT SIZE=\"1\">전체 도로 정보</FONT></th>");
-    } else {
-        $("#text4").append("<th> <FONT SIZE=\"1\">인접 도로 정보</FONT></th>");
-    }
+    $("#text4").append("<th> <FONT SIZE=\"1\">전체 도로 정보 (" + data.length + ")</FONT></th>");
+
     $("#text4").append("<th> <FONT SIZE=\"1\">통행 속도</br>(소요시간)</FONT></th>");
     $("#text4").append("</tr>");
 
@@ -111,15 +171,48 @@ function parse_total_road(data, color) {
         var obj = data[i];
         if (obj.roadNm != null) {
             $("#text4").append("<tr>");
-            $("#text4").append("<td> <FONT SIZE=\"1\">" + obj.roadNm + "</FONT></td>");
-            $("#text4").append("<td> <FONT SIZE=\"1\">" + obj.avg_speed + "</FONT></td>");
+            $("#text4").append("<td> <FONT SIZE=\"1\">" + obj.roadNm + "</FONT>");
+            switch (obj.sectionInfoCd) {
+                case "01":
+                    $("#text4").append("<FONT COLOR='green' SIZE=\"1\">- 원활</FONT>");
+                    break;
+                case "02":
+                    $("#text4").append("<FONT COLOR='yellow' SIZE=\"1\">- 서행</FONT>");
+                    break;
+                case "03":
+                    $("#text4").append("<FONT COLOR='red' SIZE=\"1\">- 혼잡</FONT>");
+                    break;
+            }
+            $("#text4").append("</td>");
             $("#text4").append("</tr>");
 
             $("#text4").append("<tr>");
             $("#text4").append("<td> <FONT SIZE=\"1\">" + "(" + obj.sectionNm + ")" + "</FONT></td>");
-            $("#text4").append("<td> <FONT SIZE=\"1\">" + "(" + obj.travel_time + ")" + "</FONT></td>");
+            $("#text4").append("<td> <FONT SIZE=\"1\"> " + obj.avg_speed + " (" + obj.travel_time + ")" + "</FONT></td>");
             $("#text4").append("</tr>");
 
+            /*
+                        $("#text4").append("<tr>");
+                        $("#text4").append("<td> <FONT SIZE=\"1\">" + obj.roadNm + "</FONT>");
+                        switch (obj.sectionInfoCd) {
+                            case "01":
+                                $("#text4").append("<FONT COLOR='green' SIZE=\"1\">- 원활</FONT>");
+                                break;
+                            case "02":
+                                $("#text4").append("<FONT COLOR='yellow' SIZE=\"1\">- 서행</FONT>");
+                                break;
+                            case "03":
+                                $("#text4").append("<FONT COLOR='red' SIZE=\"1\">- 혼잡</FONT>");
+                                break;
+                        }
+                        $("#text4").append("</td>");
+                        $("#text4").append("</tr>");
+
+                        $("#text4").append("<tr>");
+                        $("#text4").append("<td> <FONT SIZE=\"1\">" + "(" + obj.sectionNm + ")" + "</FONT></td>");
+                        $("#text4").append("<td> <FONT SIZE=\"1\"> " + obj.linkSpeed + " (" + obj.linkTime + ")" + "</FONT></td>");
+                        $("#text4").append("</tr>");
+            */
             $("#text4").append("<tr>");
             $("#text4").append("</br>");
             $("#text4").append("</tr>");
@@ -128,45 +221,43 @@ function parse_total_road(data, color) {
 }
 
 function parse_ext_Data(data) {
-    var emerX = [];
-    var emerY = [];
     var emerInfo = [];
-
-    var accX = [];
-    var accY = [];
     var accInfo = [];
 
-    var checkEmer = false;
+    var cA = false;
+    var cE = false;
 
     if (!checkClickEmerMarker) {
-        $("#text1").empty();
-        $("#text1").append("<tr>");
-        $("#text1").append("<th>돌발 상황 정보</th>");
-        $("#text1").append("<th></th>");
-        $("#text1").append("</tr>");
+        initEmerText();
     }
 
     if (data != null && data[0] != null) {
         for (var i = 0; i < data.length; i++) {
             var obj = data[i];
             if (obj.type == "sudden case") {
-                checkEmer = true;
                 if (!checkClickEmerMarker) {
+                    if (cE) {
+                        $("#text1").append("<tr>");
+                        $("#text1").append("</br>");
+                        $("#text1").append("</tr>");
+                    }
+                    cE = true;
                     $("#text1").append("<tr>");
                     $("#text1").append("<td>" + obj.info + "</td>");
                     $("#text1").append("</tr>");
-
-                    $("#text1").append("<tr>");
-                    $("#text1").append("</br>");
-                    $("#text1").append("</tr>");
                 }
-                emerX.push(obj.y);
-                emerY.push(obj.x);
                 emerInfo.push(obj);
 
             } else if (obj.type == "accident") {
-                checkAcc = true;
-                if (!checkClickAccMarker) {
+                checkAcc=true;
+                if (!checkClickAccMarker && !checkClickAccMarker2) {
+                    if (cA) {
+                        $("#text2").append("<tr>");
+                        $("#text2").append("</br>");
+                        $("#text2").append("</tr>");
+                    }
+                    cA = true;
+
                     $("#text2").append("<tr>");
                     if (obj.info == "car") {
                         $("#text2").append("<td>" + "< 외부 > 차량간 추돌 사고" + "</td>");
@@ -179,112 +270,111 @@ function parse_ext_Data(data) {
                     $("#text2").append("<td>" + "id: " + obj.id + "</td>");
                     $("#text2").append("</tr>");
 
-                    $("#text2").append("<tr>");
-                    $("#text2").append("</br>");
-                    $("#text2").append("</tr>");
                 }
-
-                accX.push(obj.y);
-                accY.push(obj.x);
                 accInfo.push(obj);
             }
         }
-        setEmerMarkers(emerX, emerY, emerInfo);
-        setAccMarkers(accX, accY, accInfo, "ext");
-        if (!checkEmer) {
-            clearEmerMarker();
-        }
-    } else {
-        clearEmerMarker();
     }
+    setAccMarkers2(accInfo);
+    setEmerMarkers(emerInfo);
+
 }
 
-
 function parse_incident_Data(data) {
-    var checkGong = true;
-
-    var accX = [];
-    var accY = [];
     var accInfo = [];
-
-    var gongX = [];
-    var gongY = [];
     var gongInfo = [];
 
-    if (!checkClickAccMarker) {
-        $("#text2").empty();
-        $("#text2").append("<tr>");
-        $("#text2").append("<th>사고 정보</th>");
-        $("#text2").append("<th>사고 위치</th>");
-        $("#text2").append("</tr>");
+    var cA = false;
+    var cG = false;
+
+    if (!checkClickAccMarker && !checkClickAccMarker2) {
+        initAccText();
     }
     if (!checkClickGongMarker) {
-        $("#text3").empty();
-        $("#text3").append("<tr>");
-        $("#text3").append("<th>공사 정보</th>");
-        $("#text3").append("<th>공사 위치</th>");
-        $("#text3").append("</tr>");
+        initGongText();
     }
     if (data != null && data[0] != null) {
         for (var i = 0; i < data.length; i++) {
             var obj = data[i];
             if (obj.incidentcode == 1) {
-                checkAcc = true;
-                if (!checkClickAccMarker) {
+                checkAcc=true;
+                if (!checkClickAccMarker && !checkClickAccMarker2) {
+                    if (cA) {
+                        $("#text2").append("<tr>");
+                        $("#text2").append("</br>");
+                        $("#text2").append("</tr>");
+                    }
+                    cA = true;
+
                     $("#text2").append("<tr>");
                     $("#text2").append("<td>" + "< API >" + obj.incidenttitle + "</td>");
                     $("#text2").append("</tr>");
 
                     $("#text2").append("<tr>");
-                    $("#text2").append("<td>" + obj.location + "</td>");
+                    $("#text2").append("<td>발생 위치: " + obj.location + "</td>");
                     $("#text2").append("</tr>");
 
                     $("#text2").append("<tr>");
-                    $("#text2").append("</br>");
+                    $("#text2").append("<td>인근 지역 교통: " + obj.trafficgrade + "</td>");
+                    $("#text2").append("</tr>");
+
+                    $("#text2").append("<tr>");
+                    $("#text2").append("<td>추가 사고 위험: " + obj.troublegrade + "</td>");
                     $("#text2").append("</tr>");
                 }
-
-                accX.push(obj.y);
-                accY.push(obj.x);
                 accInfo.push(obj);
-                console.log("사고 정보 처리");
-
-
             } else if (obj.incidentcode == 2) {
-                checkGong = false;
                 if (!checkClickGongMarker) {
+                    if (cG) {
+                        $("#text3").append("<tr>");
+                        $("#text3").append("</br>");
+                        $("#text3").append("</tr>");
+                    }
+                    cG = true;
 
                     $("#text3").append("<tr>");
                     $("#text3").append("<td colspan='2'>" + obj.incidenttitle + "</td>");
                     $("#text3").append("</tr>");
 
                     $("#text3").append("<tr>");
-                    $("#text3").append("<td colspan='2'>" + obj.location + "</td>");
+                    $("#text3").append("<td colspan='2'>발생 위치: " + obj.location + "</td>");
                     $("#text3").append("</tr>");
 
                     $("#text3").append("<tr>");
-                    $("#text3").append("</br>");
+                    $("#text3").append("<td>인근 지역 교통: " + obj.trafficgrade + "</td>");
+                    $("#text3").append("</tr>");
+
+                    $("#text3").append("<tr>");
+                    $("#text3").append("<td>사고 위험: " + obj.troublegrade + "</td>");
                     $("#text3").append("</tr>");
                 }
-
-                gongX.push(obj.y);
-                gongY.push(obj.x);
                 gongInfo.push(obj);
-                console.log("공사 정보 처리");
-
             }
         }
-        if (checkAcc) {
-            setAccMarkers(accX, accY, accInfo, "api");
-        }
-        if (checkGong) {
-            clearGongMarker();
-        } else {
-            setGongMarkers(gongX, gongY, gongInfo);
-        }
-    } else {
-        clearGongMarker();
-        clearAccMarker();
     }
+    setAccMarkers(accInfo);
+    setGongMarkers(gongInfo);
 
+}
+
+function initEmerText() {
+    $("#text1").empty();
+    $("#text1").append("<tr>");
+    $("#text1").append("<th>돌발 상황 정보</th>");
+    $("#text1").append("</tr>");
+}
+
+function initAccText() {
+    $("#text2").empty();
+    $("#text2").append("<tr>");
+    $("#text2").append("<th>사고 정보</th>");
+    $("#text2").append("</tr>");
+
+}
+
+function initGongText() {
+    $("#text3").empty();
+    $("#text3").append("<tr>");
+    $("#text3").append("<th>공사 정보</th>");
+    $("#text3").append("</tr>");
 }

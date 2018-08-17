@@ -29,8 +29,8 @@ public class OpenAPI {
                 Address = "http://openapi.its.go.kr/api/NEventIdentity?key=" + auth_key + "%20&ReqType=2&MinX=" + minX + "&MaxX=" + maxX + "%20&MinY=" + minY + "&MaxY=" + maxY + "&type=its";
                 break;
             case 2:
-                Address = "http://openapi.its.go.kr/api/NTrafficInfo?key=" + auth_key + "&ReqType=2&MinX=" + String.format("%.6f", DataManager.getInstance().getStartX()) + "&MaxX="
-                        + String.format("%.6f", DataManager.getInstance().getEndX()) + "%20&MinY=" + String.format("%.6f", DataManager.getInstance().getStartY()) + "&MaxY=" + String.format("%.6f", DataManager.getInstance().getEndY());
+                Address = "http://openapi.its.go.kr/api/NTrafficInfo?key=" + auth_key + "&ReqType=2&MinX=" + String.format("%.6f", DataManager.getInstance().getStartX() -0.01) + "&MaxX="
+                        + String.format("%.6f", DataManager.getInstance().getEndX() + 0.01) + "%20&MinY=" + String.format("%.6f", DataManager.getInstance().getStartY() - 0.01) + "&MaxY=" + String.format("%.6f", DataManager.getInstance().getEndY()+ 0.01);
                 System.out.println(Address);
                 break;
             case 3:

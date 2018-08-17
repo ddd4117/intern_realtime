@@ -21,7 +21,7 @@ public class DataManager {
     private HashMap<String, DaeguTraffic> daeguTrafficHashMap;
     private HashMap<String, DaeguIncidient> incidientHashMap;
     private ArrayList<Communication> communications;
-
+    private ArrayList<String> init_infomation;
     /* Start and End coord */
     private double startX, startY, endX, endY;
     private boolean ready_to_start = false;
@@ -35,6 +35,7 @@ public class DataManager {
         gpsdata = new ArrayList<>();
         externalAccident = new ArrayList<>();
         externalSuddenCase = new ArrayList<>();
+        init_infomation = new ArrayList<>();
     }
 
     public void updateGPS() {
@@ -56,6 +57,14 @@ public class DataManager {
             }
         }
         return ourInstance;
+    }
+
+    public ArrayList<String> getInit_infomation() {
+        return init_infomation;
+    }
+
+    public void setInit_infomation(ArrayList<String> init_infomation) {
+        this.init_infomation = init_infomation;
     }
 
     public ArrayList<Communication> getCommunications() {

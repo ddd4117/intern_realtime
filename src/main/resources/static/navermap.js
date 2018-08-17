@@ -1,25 +1,25 @@
 var arrCheck = false;
 var nowDriving = false;
 var viewFixed = true;
-var zoomSize = 14;
+var zoomSize = 12;
 
 var cX, cY;
-var startX, startY;
 var currentP = 0;
 var currMarker;
+
 var accidentMarkers = [];
+var accidentMarkers2= [];
 var gongsaMarkers = [];
 var emergencyMarkers = [];
 
-var checkClickEmerMarker=false;
-var checkClickAccMarker=false;
-var checkClickGongMarker=false;
+var checkClickEmerMarker = false;
+var checkClickAccMarker = false;
+var checkClickAccMarker2 = false;
+var checkClickGongMarker = false;
 
+var startX, startY;
 var destination, start; // marker
-var routeX = [35.858018, 35.862313, 35.862313, 35.858108, 35.861992, 35.860165, 35.860165, 35.863499, 35.863499, 35.863926, 35.864235, 35.864423, 35.865858, 35.866048, 35.866048, 35.869558, 35.869558, 35.869417, 35.873957, 35.873956, 35.874093, 35.876422, 35.876667, 35.876666, 35.877355, 35.877553, 35.877552, 35.879392, 35.879391, 35.878616, 35.881913, 35.881912, 35.882943, 35.882813, 35.882813, 35.892907, 35.892906, 35.893510, 35.890567, 35.890402, 35.890401, 35.894782, 35.894781, 35.895017, 35.889382, 35.889042, 35.889041, 35.881643, 35.902328, 35.901585, 35.901585, 35.881607, 35.881607, 35.897000, 35.898348, 35.898348, 35.899493, 35.884985, 35.884985, 35.884030, 35.882593, 35.882593, 35.905005,
-];
-var routeY = [128.648288, 128.648248, 128.648248, 128.647540, 128.647472, 128.647197, 128.647197, 128.647005, 128.647005, 128.645816, 128.643975, 128.643860, 128.640520, 128.639740, 128.639740, 128.637435, 128.637435, 128.637268, 128.634607, 128.634606, 128.634475, 128.632878, 128.632833, 128.632833, 128.630074, 128.630006, 128.630005, 128.626994, 128.626994, 128.626875, 128.625688, 128.625688, 128.622597, 128.621450, 128.621450, 128.621338, 128.621338, 128.620015, 128.619380, 128.619075, 128.619075, 128.618743, 128.618743, 128.618108, 128.617488, 128.617205, 128.617205, 128.617127, 128.616098, 128.616073, 128.616073, 128.615972, 128.615971, 128.615617, 128.615235, 128.615235, 128.615133, 128.614497, 128.614496, 128.613352, 128.612402, 128.612401, 128.602910,
-];
+
 var map;
 
 
@@ -48,39 +48,37 @@ function changeStep(stage) {
     }
 }
 
-
-function getClickAccMarker2(obj,i) {
+function getClickAccMarker2(obj, i) {
     return function (e) {
-        checkClickAccMarker = true;
+        checkClickAccMarker2 = true;
+        checkClickAccMarker=false;
         $("#text2").empty();
         $("#text2").append("<tr>");
         $("#text2").append("<th>사고 정보</th>");
         $("#text2").append("</tr>");
 
-        if(obj.info=="car") {
+        $("#text2").append("<tr>");
+        if (obj.info == "car") {
             $("#text2").append("<td>" + "< 외부 > 차량간 추돌 사고" + "</td>");
-        }else {
+        } else {
             $("#text2").append("<td>" + "< 외부 > " + obj.info + "</td>");
         }
         $("#text2").append("</tr>");
 
         $("#text2").append("<tr>");
-        $("#text2").append("<td>" + "id: " +obj.id + "</td>");
-        $("#text2").append("</tr>");
-
-        $("#text2").append("<tr>");
-        $("#text2").append("</br>");
+        $("#text2").append("<td>" + "id: " + obj.id + "</td>");
         $("#text2").append("</tr>");
     }
 }
-function getClickAccMarker(obj,i){
+
+function getClickAccMarker(obj, i) {
     return function (e) {
-        checkClickAccMarker=true;
+        checkClickAccMarker = true;
+        checkClickAccMarker2 = false;
 
         $("#text2").empty();
         $("#text2").append("<tr>");
         $("#text2").append("<th>사고 정보</th>");
-        $("#text2").append("<th>사고 위치</th>");
         $("#text2").append("</tr>");
 
         $("#text2").append("<tr>");
@@ -88,78 +86,14 @@ function getClickAccMarker(obj,i){
         $("#text2").append("</tr>");
 
         $("#text2").append("<tr>");
-        $("#text2").append("<td>" + obj.location + "</td>");
+        $("#text2").append("<td>발생 위치: " + obj.location + "</td>");
         $("#text2").append("</tr>");
-
-        $("#text2").append("<tr>");
-        $("#text2").append("</br>");
-        $("#text2").append("</tr>");
-
     }
 }
-function setAccMarkers(x, y,info,type) {
 
-    for(var j=0;j<accidentMarkers.length;j++){
-        var ch=true;
-        for(var i=0;i<x.length;i++) {
-            if(x[i]==accidentMarkers[j].position.lng() && y[i]==accidentMarkers[j].position.lat()){
-                x.slice(i,i); y.slice(i,i); info.slice(i,i);
-                ch=false;
-                break;
-            }
-        }
-        accidentMarkers[j].setOptions({map:null});
-        accidentMarkers.slice(j,j);
-    }
-
-    for(var i=0;i<x.length;i++){
-        var newMarker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(x[i], y[i]),
-            map: map,
-            icon: {
-                url: './img/accident.png',
-            }
-        });
-        if(type=="ext") {
-            naver.maps.Event.addListener(newMarker, 'click', getClickAccMarker2(info[i], i));
-        }else if(type=="api") {
-            naver.maps.Event.addListener(newMarker, 'click', getClickAccMarker(info[i], i));
-        }
-        accidentMarkers.push(newMarker);
-    }
-
-}
-function setEmerMarkers(x,y,info) {
-
-    for(var j=0;j<emergencyMarkers.length;j++){
-        var ch=true;
-        for(var i=0;i<x.length;i++) {
-            if(x[i]==emergencyMarkers[j].position.lng() && y[i]==emergencyMarkers[j].position.lat()) {
-                x.slice(i,i); y.slice(i,i); info.slice(i,i);
-                ch=false;
-                break;
-            }
-        }
-        emergencyMarkers[j].setOptions({map:null});
-        emergencyMarkers.slice(j,j);
-    }
-
-    for(var i=0;i<x.length;i++){
-        var newMarker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(x[i], y[i]),
-            map: map,
-            icon: {
-                url: './img/emergency.png',
-            }
-        });
-        naver.maps.Event.addListener(newMarker, 'click', getClickEmerMarker(info[i], i));
-        emergencyMarkers.push(newMarker);
-    }
-
-}
-function getClickEmerMarker(obj,i) {
+function getClickEmerMarker(obj, i) {
     return function (e) {
-        checkClickEmerMarker=true;
+        checkClickEmerMarker = true;
         $("#text1").empty();
         $("#text1").append("<tr>");
         $("#text1").append("<th>돌발 상황 정보</th>");
@@ -169,15 +103,12 @@ function getClickEmerMarker(obj,i) {
         $("#text1").append("<tr>");
         $("#text1").append("<td>" + obj.info + "</td>");
         $("#text1").append("</tr>");
-
-        $("#text1").append("<tr>");
-        $("#text1").append("</br>");
-        $("#text1").append("</tr>");
     }
 
 }
-function getClickGongsaMarker(obj,i) {
-    return function(e) {
+
+function getClickGongsaMarker(obj, i) {
+    return function (e) {
         checkClickGongMarker = true;
 
         console.log("get clicklistener gongsa marker>> (" + i + ")" + obj.incidenttitle);
@@ -185,7 +116,6 @@ function getClickGongsaMarker(obj,i) {
         $("#text3").empty();
         $("#text3").append("<tr>");
         $("#text3").append("<th>공사 정보</th>");
-        $("#text3").append("<th>공사 위치</th>");
         $("#text3").append("</tr>");
 
         $("#text3").append("<tr>");
@@ -193,71 +123,208 @@ function getClickGongsaMarker(obj,i) {
         $("#text3").append("</tr>");
 
         $("#text3").append("<tr>");
-        $("#text3").append("<td colspan='2'>" + obj.location + "</td>");
-        $("#text3").append("</tr>");
-
-        $("#text3").append("<tr>");
-        $("#text3").append("</br>");
+        $("#text3").append("<td colspan='2'>발생 위치: " + obj.location + "</td>");
         $("#text3").append("</tr>");
     }
 }
 
-function setGongMarkers(x,y,info) {
-    console.log("set marker >> gongsaMarkers length:"+gongsaMarkers.length);
-    console.log("set marker >> x length: "+ x.length);
-
-    for(var j=0;j<gongsaMarkers.length;j++){
-        var ch=true;
-        for(var i=0;i<x.length;i++) {
-            if(x[i]==gongsaMarkers[j].position.lng() && y[i]==gongsaMarkers[j].position.lat()){
-                x.slice(i,i); y.slice(i,i); info.slice(i,i);
-                ch=false;
+function setAccMarkers(info) {
+    if (info == null || info[0] == null || info.length == 0) {
+        checkClickAccMarker=false;
+        clearAccMarker();
+        return;
+    }
+    for (var j = 0; j < accidentMarkers.length; j++) {
+        var ch = true;
+        for (var i = 0; i < info.length; i++) {
+            var xValue = Math.abs(info[i].x - accidentMarkers[j].position.lng());
+            var yValue = Math.abs(info[i].y - accidentMarkers[j].position.lat());
+            if (xValue <= 0.0005 && yValue <= 0.0005) {
+                info[i].x = -1;
+                info[i].y = -1;
+                ch = false;
                 break;
             }
         }
-        gongsaMarkers[j].setOptions({map:null});
-        gongsaMarkers.slice(j,j);
+        if (ch) {
+            accidentMarkers[j].setMap(null);
+        }
+
     }
 
-    for(var i=0;i<x.length;i++){
-        var newMarker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(x[i], y[i]),
-            map: map,
-            icon: {
-                url: './img/gongsa.png',
+    for (var i = 0; i < info.length; i++) {
+        if (info[i].x != -1) {
+            var newMarker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(info[i].y, info[i].x),
+                map: map,
+                icon: {
+                    url: './img/accident.png',
+                }
+            });
+            naver.maps.Event.addListener(newMarker, 'click', getClickAccMarker(info[i], i));
+
+            accidentMarkers.push(newMarker);
+        }
+    }
+
+}
+function setAccMarkers2(info) {
+    if (info == null || info[0] == null || info.length == 0) {
+        checkClickAccMarker2=false;
+        clearAccMarker2();
+        if(!checkAcc) initAccText();
+        return;
+    }
+    for (var j = 0; j < accidentMarkers2.length; j++) {
+        var ch = true;
+        for (var i = 0; i < info.length; i++) {
+            var xValue = Math.abs(info[i].x - accidentMarkers2[j].position.lng());
+            var yValue = Math.abs(info[i].y - accidentMarkers2[j].position.lat());
+            if (xValue <= 0.0005 && yValue <= 0.0005) {
+                info[i].x = -1;
+                info[i].y = -1;
+                ch = false;
+                break;
             }
-        });
-        console.log("add clicklistener gongsa marker>> " + info[i].incidenttitle);
-        naver.maps.Event.addListener(newMarker, 'click', getClickGongsaMarker(info[i], i));
-        gongsaMarkers.push(newMarker);
+        }
+        if (ch) {
+            accidentMarkers2[j].setMap(null);
+        }
+
+    }
+
+    for (var i = 0; i < info.length; i++) {
+        if (info[i].x != -1) {
+            var newMarker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(info[i].y, info[i].x),
+                map: map,
+                icon: {
+                    url: './img/accident.png',
+                }
+            });
+            naver.maps.Event.addListener(newMarker, 'click', getClickAccMarker2(info[i], i));
+            accidentMarkers2.push(newMarker);
+        }
+    }
+
+}
+
+function setEmerMarkers(info) {
+    if (info == null || info[0] == null || info.length == 0) {
+        checkClickEmerMarker=false;
+        clearEmerMarker();
+        return;
+    }
+    for (var j = 0; j < emergencyMarkers.length; j++) {
+        var ch = true;
+        for (var i = 0; i < info.length; i++) {
+            var xValue = Math.abs(info[i].x - emergencyMarkers[j].position.lng());
+            var yValue = Math.abs(info[i].y - emergencyMarkers[j].position.lat());
+            if (xValue <= 0.0005 && yValue <= 0.0005) {
+                info[i].x = -1;
+                info[i].y = -1;
+                ch = false;
+                break;
+            }
+        }
+        if (ch) {
+            emergencyMarkers[j].setMap(null);
+        }
+    }
+
+    console.log("emer Marker length: " + emergencyMarkers.length);
+    console.log("emer info length: " + info.length);
+    for (var i = 0; i < info.length; i++) {
+        if (info[i].x != -1) {
+            var newMarker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(info[i].y, info[i].x),
+                map: map,
+                icon: {
+                    url: './img/emergency.png',
+                }
+            });
+            naver.maps.Event.addListener(newMarker, 'click', getClickEmerMarker(info[i], i));
+            emergencyMarkers.push(newMarker);
+        }
+    }
+}
+
+function setGongMarkers(info) {
+    if (info == null || info[0] == null || info.length == 0) {
+        checkClickGongMarker=false;
+        clearGongMarker();
+        return;
+    }
+    console.log("set marker >> gongsaMarkers length:" + gongsaMarkers.length);
+    console.log("set marker >> info length: " + info.length);
+
+    for (var j = 0; j < gongsaMarkers.length; j++) {
+        var ch = true;
+        for (var i = 0; i < info.length; i++) {
+            var xValue = Math.abs(info[i].x - gongsaMarkers[j].position.lng());
+            var yValue = Math.abs(info[i].y - gongsaMarkers[j].position.lat());
+            if (xValue <= 0.0005 && yValue <= 0.0005) {
+                info[i].x = -1;
+                info[i].y = -1;
+                ch = false;
+                break;
+            }
+        }
+        if (ch) {
+            emergencyMarkers[j].setMap(null);
+        }
+    }
+
+    for (var i = 0; i < info.length; i++) {
+        if (info[i].x != -1) {
+            var newMarker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(info[i].y, info[i].x),
+                map: map,
+                icon: {
+                    url: './img/gongsa.png',
+                }
+            });
+            naver.maps.Event.addListener(newMarker, 'click', getClickGongsaMarker(info[i], i));
+            gongsaMarkers.push(newMarker);
+        }
     }
 }
 
 function clearGongMarker() {
-    if(gongsaMarkers==null) return;
-    console.log("clear marker >> gongsaMarkers length:"+gongsaMarkers.length);
-    for(var i=0;i<gongsaMarkers.length;i++){
-        gongsaMarkers[i].setOptions({map:null});
+    if (gongsaMarkers == null) return;
+    initGongText();
+    console.log("clear marker >> gongsaMarkers length:" + gongsaMarkers.length);
+    for (var i = 0; i < gongsaMarkers.length; i++) {
+        gongsaMarkers[i].setMap(null);
     }
-    gongsaMarkers=[];
+    gongsaMarkers = [];
 }
 
 function clearEmerMarker() {
-    if(emergencyMarkers==null) return;
-    console.log("clear marker >> emergencyMarkers length:"+emergencyMarkers.length);
-    for(var i=0;i<emergencyMarkers.length;i++){
-        emergencyMarkers[i].setOptions({map:null});
+    if (emergencyMarkers == null) return;
+    initEmerText();
+    console.log("clear marker >> emergencyMarkers length:" + emergencyMarkers.length);
+    for (var i = 0; i < emergencyMarkers.length; i++) {
+        emergencyMarkers[i].setMap(null);
     }
-    emergencyMarkers=[];
+    emergencyMarkers = [];
 }
 
 function clearAccMarker() {
-    if(accidentMarkers==null) return;
-    console.log("clear marker >> AccMarkers length:"+accidentMarkers.length);
-    for(var i=0;i<accidentMarkers.length;i++){
-        accidentMarkers[i].setOptions({map:null});
+    if (accidentMarkers == null) return;
+    console.log("clear marker >> AccMarkers length:" + accidentMarkers.length);
+    for (var i = 0; i < accidentMarkers.length; i++) {
+        accidentMarkers[i].setMap(null);
     }
-    accidentMarkers=[];
+    accidentMarkers = [];
+}
+function clearAccMarker2() {
+    if (accidentMarkers2 == null) return;
+    console.log("clear marker >> AccMarkers2 length:" + accidentMarkers2.length);
+    for (var i = 0; i < accidentMarkers2.length; i++) {
+        accidentMarkers2[i].setMap(null);
+    }
+    accidentMarkers2 = [];
 }
 
 function fixDestination() {
@@ -267,9 +334,9 @@ function fixDestination() {
     nowDriving = true;
 }
 
-function setStartMarker(x,y) {
-    startX=x;
-    startY=y;
+function setStartMarker(x, y) {
+    startX = x;
+    startY = y;
     start = new naver.maps.Marker({
         position: new naver.maps.LatLng(startX, startY),
         map: map,
@@ -287,8 +354,8 @@ function initMap() {
             style: naver.maps.ZoomControlStyle.SMALL,
             position: naver.maps.Position.BOTTOM_LEFT
         },
-        center: new naver.maps.LatLng(startX,startY),
-        zoom: zoomSize
+        center: new naver.maps.LatLng(startX, startY),
+        zoom: 8
     });
 
 
@@ -314,7 +381,6 @@ function initMap() {
 
 }
 
-
 function setCarMarker(x, y) {
     if (currMarker == null) {
         currMarker = new naver.maps.Marker({
@@ -333,19 +399,18 @@ function setCarMarker(x, y) {
     }
 }
 
-
 function move_mainCursor(data) {
     // alert(data.x + " " + data.y);
     cX = data.y;
     cY = data.x;
-    if(currentP==0) {
-        setStartMarker(cX,cY);
-        viewFixed=true;
+    if (currentP == 0) {
+        setStartMarker(cX, cY);
+        viewFixed = true;
     }
-    if(currentP==1)
-        viewFixed=true;
+    if (currentP == 1)
+        viewFixed = true;
 
-    changeStep(2);
     setCarMarker(cX, cY);
     currentP++;
+    changeStep(2);
 }

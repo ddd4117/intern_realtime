@@ -84,13 +84,13 @@ public class TCP_Connection_Thread implements Runnable {
                 if (incidient.getIncidientcode() != 1) continue; // it is not a accident code
 
                 double dis = distance(incidient.getCoordy(), incidient.getCoordx(), y, x);
-                if (dis < 50) {
+                if (dis < 100) {
                     return true;
                 }
             }
             for (ExternalCarInfo car : DataManager.getInstance().getExternalAccident()) {
                 double dis = distance(car.getY(), car.getX(), y, x);
-                if (dis < 50) {
+                if (dis < 100) {
                     return true;
                 }
             }

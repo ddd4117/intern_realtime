@@ -67,13 +67,13 @@ public class DomParser {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("Communication Parsing Start");
 
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
 
         ArrayList<Communication> communicationArrayList = new ArrayList<>();
         NodeList item = document.getElementsByTagName("data");
+        System.out.println("========== its Traffic information Gathering : " + item.getLength() + "==========");
         System.out.println(item.getLength());
         for (int idx = 0; idx < item.getLength(); idx++) {
             Communication communication = new Communication();
@@ -88,7 +88,6 @@ public class DomParser {
             communication.setGenerate_date(element.getElementsByTagName("generatedate").item(0).getTextContent());
             communicationArrayList.add(communication);
         }
-        System.out.println("Communication Parsing END");
         return communicationArrayList;
     }
 
@@ -96,7 +95,6 @@ public class DomParser {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("DOMPARSER START");
 
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
@@ -132,14 +130,12 @@ public class DomParser {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("process_DaeguTraffic START");
-
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
 
         HashMap<String, DaeguTraffic> daeguTraffics = new HashMap<>();
         NodeList item = document.getElementsByTagName("item");
-        System.out.println(item.getLength());
+        System.out.println("========== Daegu Traffic information Gathering : " + item.getLength() + "==========");
         for (int idx = 0; idx < item.getLength(); idx++) {
             DaeguTraffic traffic = new DaeguTraffic();
             Node node = item.item(idx);
@@ -158,7 +154,6 @@ public class DomParser {
             traffic.setStdLinkId(key);
             daeguTraffics.put(key, traffic);
         }
-        System.out.println("process_DaeguTraffic END");
         return daeguTraffics;
     }
 
@@ -172,14 +167,12 @@ public class DomParser {
         DocumentBuilderFactory documentBuilderFactory;
         DocumentBuilder documentBuilder;
         Document document = null;
-        System.out.println("process_DaeguIncidient START");
-
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         document = getDocument(is, documentBuilderFactory, document);
 
         HashMap<String, DaeguIncidient> daeguIncidients = new HashMap<>();
         NodeList item = document.getElementsByTagName("item");
-        System.out.println(item.getLength());
+        System.out.println("========== Daegu inidient information Gathering : " + item.getLength() + "==========");
         for (int idx = 0; idx < item.getLength(); idx++) {
             DaeguIncidient daeguIncidient = new DaeguIncidient();
             Node node = item.item(idx);
@@ -203,7 +196,6 @@ public class DomParser {
             daeguIncidient.setIncidentid(key);
             daeguIncidients.put(key, daeguIncidient);
         }
-        System.out.println("process_DaeguIncidient END");
         return daeguIncidients;
     }
 

@@ -43,17 +43,32 @@ public class Scheduler {
             JSONArray jsonArray = new JSONArray();
             List<String> node_id_list = nodeDao.getNodeID(gps);
             ArrayList<Communication> communications = DataManager.getInstance().getCommunications();
+
             HashMap<String, DaeguTraffic> daeguTrafficHashMap = DataManager.getInstance().getDaeguTrafficHashMap();
+//            for (String id : node_id_list) {
+//                for (String init_id : DataManager.getInstance().getInit_infomation()) {
+//                    if(id.equals(init_id) && daeguTrafficHashMap.containsKey(id)){
+//
+//                        DaeguTraffic traffic = daeguTrafficHashMap.get(id);
+//                        jsonArray.add(traffic.convertJsonInfo());
+//                    }
+//                }
+//            }
+
+
             for (String str : node_id_list) {
                 for (Communication communication : communications) {
                     if (communication.getEnd_node_id().equals(str) || communication.getStart_node_id().equals(str)) {
                         JSONObject object = communication.convertJSON();
+
                         DaeguTraffic traffic = daeguTrafficHashMap.get(communication.getRoad_section_id());
-                        if(traffic.getSectionNm() != null)
+                        if (traffic != null) {
+//                            jsonArray.add(traffic.convertJsonInfo())
                             object.put("sectionNm", traffic.getSectionNm());
-                        if(traffic.getRoadNm() != null)
                             object.put("roadNm", traffic.getRoadNm());
-                        jsonArray.add(object);
+                            object.put("sectionInfoCd",traffic.getSectionInfoCd());
+                            jsonArray.add(object);
+                        }
                     }
                 }
             }
