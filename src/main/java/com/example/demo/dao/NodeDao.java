@@ -17,10 +17,10 @@ public class NodeDao {
     JdbcTemplate jdbcTemplate;
 
     public List<String> getNodeID(GPS gps) {
-        double minX = gps.getX() - 0.007;
-        double maxX = gps.getX() + 0.007;
-        double minY = gps.getY() - 0.007;
-        double maxY = gps.getY() + 0.007;
+        double minX = gps.getX() - 0.003;
+        double maxX = gps.getX() + 0.003;
+        double minY = gps.getY() - 0.003;
+        double maxY = gps.getY() + 0.003;
         String query = "select node_id from node.node_info i where i.Y > " + minY + " and i.Y < " + maxY + " and i.X > " + minX + " and i.X < " + maxX;
 //        System.out.println(query);
         List<String> stringList = jdbcTemplate.query(query, new RowMapper<String>() {

@@ -6,6 +6,7 @@ var zoomSize = 12;
 var cX, cY;
 var currentP = 0;
 var currMarker;
+var curCircle;
 
 var accidentMarkers = [];
 var accidentMarkers2= [];
@@ -30,6 +31,7 @@ function goCurr() {
         map.setCenter(new naver.maps.LatLng(cX, cY));
         map.setZoom(zoomSize);
     }
+
 }
 
 function changeStep(stage) {
@@ -377,8 +379,6 @@ function initMap() {
     naver.maps.Event.addListener(map, 'zoom_changed', function (zoom) {
         viewFixed = false;
     });
-
-
 }
 
 function setCarMarker(x, y) {
@@ -388,8 +388,18 @@ function setCarMarker(x, y) {
             map: map,
             icon: './img/current.png'
         });
+        curCircle= new naver.maps.Circle({
+            map: map,
+            center: new naver.maps.LatLng(x, y),
+            radius: 1000,
+            fillColor: 'white',
+            fillOpacity: 0.2,
+            strokeColor: "blue",
+            strokeStyle:"longdash"
+        });
     } else {
         currMarker.setPosition(new naver.maps.LatLng(x, y));
+        curCircle.setCenter(new naver.maps.LatLng(x, y));
     }
     if (viewFixed) {
         map.setZoom(zoomSize);
